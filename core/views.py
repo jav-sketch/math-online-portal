@@ -3,4 +3,6 @@ from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
-    return HttpResponse("Welcome to the math online portal!")
+    context = {
+    }
+    return render(request, "index.html", context)
