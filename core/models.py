@@ -27,3 +27,13 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+class Teacher(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    phone = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True)
+    specification = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name
+    
