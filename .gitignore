@@ -5,6 +5,7 @@
 # Specific Files & Folders#
 math_portal/settings.py
 core/migrations/*
+static/*
 
 __pycache__
 db.sqlite3
