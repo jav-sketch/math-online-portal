@@ -6,6 +6,7 @@
 math_portal/settings.py
 core/migrations/*
 static/*
+templates/*
 
 __pycache__
 db.sqlite3
