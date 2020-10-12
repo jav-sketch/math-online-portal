@@ -4,3 +4,4 @@ from .models import *
 # Register your models here.
 admin.site.register(Course)
 admin.site.register(Teacher)
+admin.site.register(Heading)
