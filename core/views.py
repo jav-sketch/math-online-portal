@@ -12,6 +12,7 @@ def index(request):
 
 def course(request):
     context = {
+        'courses': Course.objects.all()
     }
     return render(request, 'course.html', context)
 
