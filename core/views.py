@@ -10,6 +10,10 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+def course(request):
+    context = {
+    }
+    return render(request, 'course.html', context)
 
 # class HomeView(TemplateView):
 #     template_name = "index.html"
