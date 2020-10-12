@@ -38,7 +38,7 @@ class Teacher(models.Model):
         return self.name
 
 
-class Into(models.Model):
+class Heading(models.Model):
     title = models.CharField(max_length=50, null=True)
     description = models.TextField()
 
