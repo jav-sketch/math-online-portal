@@ -36,4 +36,12 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Into(models.Model):
+    title = models.CharField(max_length=50, null=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
     
