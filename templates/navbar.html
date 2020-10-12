@@ -2,7 +2,7 @@
   <div class="container">
     <!-- Brand -->
     <a class="navbar-brand waves-effect" href="{% url 'index' %}" target="">
-      <strong class="blue-text h1">Smart Choice Math Academy</strong>
+      <strong class="blue-text">Smart Choice Math Academy</strong>
     </a>
 
     <!-- Collapse -->
@@ -24,10 +24,10 @@
       <!-- Left -->
       <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'index' %}">Home<span class="sr-only">(current)</span></a>
+            <a class="nav-link waves-effect" href="{% url 'index' %}">Home<span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'course' %}"> Courses</a>
+            <a class="nav-link waves-effect" href="{% url 'course' %}">Courses</a>
           </li> 
           <li class="nav-item">
             <a class="nav-link waves-effect" href="">About</a>
@@ -37,6 +37,16 @@
 
       <!-- Right -->
       <ul class="navbar-nav nav-flex-icons">
+
+
+        <li class="nav-item  d-none d-sm-block">
+          <!--Search Form-->
+          <form class="form-inline search-bar p-2 mr-2">
+            <input class="form-control mr-sm-3" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-md btn-primary btn-rounded my-2 my-sm-0" type="submit">Search</button>
+          </form>
+          <!--Search Form-->
+        </li>
 
         {% if request.user.is_authenticated %}
         {% comment %}<!-- <li class="nav-item">
@@ -48,7 +58,7 @@
         </li> -->{% endcomment %}
 
         <!--logout-->
-        <li class="nav-item mr-2">
+        <li class="nav-item mr-sm-3">
           <a href="{% url 'account_logout' %}" class="nav-link border border-danger rounded waves-effect"
             target="_blank">
             Logout
@@ -59,16 +69,16 @@
         {% else %}
         
         <!--login-->
-        <li class="nav-item mr-2">
-          <a class="nav-link  border border-info waves-effect" href="{% url 'account_login' %}">
-            <span class="clearfix d-none d-sm-inline-block"> Login </span>
+        <li class="nav-item mr-2 pb-2">
+          <a class="nav-link btn btn-md btn-rounded btn-outline-info waves-effect" href="{% url 'account_login' %">
+            <span class=""> Login </span>
           </a>
         </li>
         <!--login-->
          
         <!--signup--> 
-        <li class="nav-item">
-          <a href="{% url 'account_signup' %}" class="nav-link border border-secondary waves-effect"
+        <li class="nav-item pb-2">
+          <a href="{% url 'account_signup' %}" class="nav-link btn btn-md btn-rounded btn-outline-secondary waves-effect"
             target="_blank">
             SignUp
           </a>
@@ -76,6 +86,7 @@
         <!--signup--> 
 
         {% endif %}
+        
 
         <li class="nav-item">
           <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect"
@@ -83,14 +94,6 @@
             <i class="fab fa-facebook-f"></i>
           </a>
         </li>
-
-        <li class="nav-item">
-          <form class="form-inline">
-            <input class="form-control mr-sm-3" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-sm btn-primary rounded my-2 my-sm-0" type="submit">Search</button>
-          </form>
-        </li>
-
       </ul>
       <!-- Right -->
       

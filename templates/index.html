@@ -1,48 +1,23 @@
 {% extends 'base.html' %} {% block content %}
 
+{% for heading in headings %}
 <div style="height: 100vh">
   <div class="flex-center background-image flex-column">
-    <h1 class="animated h1 fadeIn display-3 mb-4">Smart Choice Math Academy</h1>
-    <h4 class="animated text-lead fadeIn mb-3">Welcome</h4>
-    <p class="animated fadeIn text-muted">SCMA Team</p>
+    <h1 class="animated h1 fadeIn display-1">{{ heading.title }}</h1>
+    <h6 class="animated text-muted text-capitalize fadeIn mb-3"><blockquote>
+      {{ heading.description }}
+    </blockquote>
+    -- SCMA TEAM
+    </h6>
   </div>
 </div>
+<hr>
+{% endfor %}
 
-<hr />
 
-<section class="p-5">
-  <div class="container">
-    <div class="row">
-      <div class="col text-center">
-        <h1 class="animated h1 display-1 fadeIn mb-3">our aim</h1>
-        <p class="animated fadeIn">Catchy Slogan</p>
-      </div>
-    </div>
-  </div>
+<!--Aim Section-->
 
-  <div class="container-fluid">
-    <div class="row">
-      <!-- {% for course in courses %} -->
-      <!-- <div class="col-md-4 pt-3">
-        <div class="card mr-2" style="width: 18rem"> -->
-          <!-- <img src="..." class="card-img-top" alt="..." /> -->
-          <!-- <div class="card-body">
-            <h5 class="card-title">{{ course.title }}</h5>
-            <p class="card-text">
-              {{ course.description }}
-            </p>
-            <span>{{ course.evening }}</span>
-            <span>Price: ${{ course.price }}</span>
-            <a href="#" class="btn btn-primary">Enroll</a>
-          </div>
-        </div>
-      </div> -->
-      <!-- {% endfor %} -->
-    </div>
-  </div>
-
-  </div>
-</section>
+<!--Aim Section-->
 
 {% endblock %}
 <!-- End your project here-->
