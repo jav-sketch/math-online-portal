@@ -10,7 +10,7 @@ CATEGORY = (
     ('AS', 'AFTER SCHOOL'),
     ('EC', 'EVENING CLASSES'),
     ('PT', 'PRIVATE TUTORING'),
-    ('SC', 'SATURDAY CLASSES'),
+    ('S', 'SATURDAY CLASSES'),
     ('SC', 'SPECIALIZED COURSES'),
 )
 
@@ -55,6 +55,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
