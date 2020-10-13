@@ -24,13 +24,13 @@
       <!-- Left -->
       <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link waves-effect" href="{% url 'index' %}">Home<span class="sr-only">(current)</span></a>
+            <a class="nav-link waves-effect" href="{% url 'index' %}"><i class="fas fa-home"></i>Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="{% url 'course' %}">Courses</a>
+            <a class="nav-link waves-effect" href="{% url 'course' %}"><i class="fas fa-book"></i>Courses</a>
           </li> 
           <li class="nav-item">
-            <a class="nav-link waves-effect" href="">About</a>
+            <a class="nav-link waves-effect" href=""><i class="fas fa-chalkboard-teacher"></i>About</a>
           </li> 
       </ul>
       <!-- Left -->
@@ -70,7 +70,7 @@
         
         <!--login-->
         <li class="nav-item mr-2 pb-2">
-          <a class="nav-link btn btn-md btn-rounded btn-outline-info waves-effect" href="{% url 'account_login' %">
+          <a class="nav-link btn btn-md btn-rounded btn-outline-info waves-effect" href="{% url 'account_login' %}">
             <span class=""> Login </span>
           </a>
         </li>
