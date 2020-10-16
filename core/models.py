@@ -34,7 +34,21 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+
+    def get_absolute_url(self):
+        return reverse("core:enroll", kwargs={
+            'slug': self.slug
+        })    
+
+
+    def get_absolute_url_details(self):
+        return reverse("core:detail", kwargs={
+            'slug': self.slug
+        })    
+
 # CourseItem Model
+
+
 class CourseItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -46,26 +60,27 @@ class CourseItem(models.Model):
         return f"{self.quantity} of {self.course.title}"
 
 
-
 class Teacher(models.Model):
     name = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
-    specification = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
+    specification = models.ForeignKey(
+        Course, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.name
 
 
 class Enroll(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
     enrolled_dated = models.DateTimeField()
     courses = models.ManyToManyField(CourseItem)
 
     def __str__(self):
-        return self.user.username 
+        return self.user.username
 
 
 class Heading(models.Model):
@@ -74,4 +89,11 @@ class Heading(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
+class Section(models.Model):
+    name = models.CharField(max_length=50, null=True)
+    detail = models.TextField()
+
+    def __str__(self):
+        return self.name
