@@ -1,12 +1,13 @@
 from django.urls import path
-# from .views import HomeView
-from . import views
+from .views import *
+# from . import views
 
 
-appname = 'core'
+
+app_name = 'core'
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('course/', views.course, name='course'),
-
-    # path('', HomeView.as_view(), name="index"),
+    path('', HomeView.as_view(), name='index'),
+    path('course/', CourseView.as_view(), name="course"),
+    path('detail/<slug>/', CourseDetailView.as_view(), name="detail"),
+    path('enroll/<slug>/', EnrollDetailView.as_view(), name='enroll'),
 ]
