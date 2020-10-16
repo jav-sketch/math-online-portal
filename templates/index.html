@@ -1,22 +1,21 @@
 {% extends 'base.html' %} {% block content %}
 
-{% for heading in headings %}
+{% for heading in object_list %}
 <div style="height: 100vh">
   <div class="flex-center background-image flex-column">
-    <h1 class="animated h1 fadeIn display-1">{{ heading.title }}</h1>
-    <h6 class="animated text-muted text-capitalize fadeIn mb-3"><blockquote>
+    <h1 class="animated h1 fadeIn display-1 text-white">{{ heading.title }}</h1>
+    <h6 class="animated text-primary text-capitalize fadeIn mb-3"><blockquote>
       {{ heading.description }}
     </blockquote>
     -- SCMA TEAM
     </h6>
   </div>
 </div>
-<hr>
 {% endfor %}
 
 
 <!--Aim Section-->
-
+{% include 'section.html' %}
 <!--Aim Section-->
 
 {% endblock %}
