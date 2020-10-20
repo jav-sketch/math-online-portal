@@ -34,21 +34,37 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-
+    # Shortcut Method    
+    # Enrollment Link    
     def get_absolute_url(self):
-        return reverse("core:enroll", kwargs={
+        return reverse("core:enroll-summary", kwargs={
             'slug': self.slug
         })    
 
+    # # Course Details    
+    # def get_absolute_url_details(self):
+    #     return reverse("core:detail", kwargs={
+    #         'slug': self.slug
+    #     })    
 
-    def get_absolute_url_details(self):
-        return reverse("core:detail", kwargs={
+    # Add course functionality     
+    def add_course_url(self):
+        return reverse("core:add-course", kwargs={
             'slug': self.slug
         })    
+
+    # Remove course functionality       
+    def remove_course_url(self):
+        return reverse("core:remove-course", kwargs={
+            'slug': self.slug
+        })
+
+    def remove_single_course_item_url(self):        
+        return reverse("core:remove-single-course", kwargs={
+            'slug': self.slug
+        })
 
 # CourseItem Model
-
-
 class CourseItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -74,10 +90,10 @@ class Teacher(models.Model):
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    courses = models.ManyToManyField(CourseItem)
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
-    enrolled_dated = models.DateTimeField()
-    courses = models.ManyToManyField(CourseItem)
+    enrolled_date = models.DateTimeField()
 
     def __str__(self):
         return self.user.username
