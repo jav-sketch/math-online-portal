@@ -3,12 +3,15 @@
 {% for heading in object_list %}
 <div style="height: 100vh">
   <div class="flex-center background-image flex-column">
-    <h1 class="animated h1 fadeIn display-1 text-white">{{ heading.title }}</h1>
-    <h6 class="animated text-primary text-capitalize fadeIn mb-3"><blockquote>
-      {{ heading.description }}
-    </blockquote>
-    -- SCMA TEAM
-    </h6>
+    <div class="container text-center">
+      <h1 class="animated h1 fadeIn display-1 text-white">{{ heading.title }}</h1>
+      <h6 class="animated text-center mb-3 text-primary text-capitalize fadeIn mb-3">
+        <blockquote>
+        {{ heading.description }}
+        </blockquote>
+        -- SCMA TEAM
+      </h6>
+    </div> 
   </div>
 </div>
 {% endfor %}
