@@ -41,11 +41,11 @@ class Course(models.Model):
             'slug': self.slug
         })    
 
-    # # Course Details    
-    # def get_absolute_url_details(self):
-    #     return reverse("core:detail", kwargs={
-    #         'slug': self.slug
-    #     })    
+    # Course Details    
+    def get_absolute_url_details(self):
+        return reverse("core:detail", kwargs={
+            'slug': self.slug
+        })    
 
     # Add course functionality     
     def add_course_url(self):
