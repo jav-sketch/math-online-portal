@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView, DetailView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView, DetailView, ListView, View
 from django.contrib import messages
 from django.utils import timezone
 # Create your views here.
@@ -27,14 +29,24 @@ class CourseView(ListView):
 # Description of  Courses
 
 
-# class CourseDetailView(DetailView):
-#     model = Course
-#     template_name = "details.html"
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = "details.html"
+
 
 # Enrollment
 class EnrollDetailView(DetailView):
     model = Course
     template_name = "enroll.html"
+
+    
+
+#Checkout
+def checkout(request):
+    context = {}
+    return render(request, "checkout.html", context)    
+
+
 
 # Add course feature
 @login_required
