@@ -36,10 +36,10 @@ class Course(models.Model):
 
     # Shortcut Method    
     # Enrollment Link    
-    def get_absolute_url(self):
-        return reverse("core:enroll-summary", kwargs={
-            'slug': self.slug
-        })    
+    # def get_absolute_url(self):
+    #     return reverse("core:enroll-summary", kwargs={
+    #         'slug': self.slug
+    #     })    
 
     # Course Details    
     def get_absolute_url_details(self):
