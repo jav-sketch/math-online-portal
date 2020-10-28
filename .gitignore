@@ -5,7 +5,7 @@
 # Specific Files & Folders#
 math_portal/settings.py
 core/migrations/*
-core/template_tags/*
+core/templatetags/*
 static/*
 templates/*
 node_modules/*
