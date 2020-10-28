@@ -26,9 +26,21 @@ class CourseView(ListView):
     #     context['courses'] = Course.objects.all()[:]
     #     return context
 
+
+class EnrollSummaryView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        try:
+            enroll = Enroll.objects.get(self.request.user, enrolled=False)
+            context = {
+                'object': enroll
+            }
+            return render(self.request, 'enroll.html', context)
+        except ObjectDoesNotExist:
+            message.error(self.request, "Not Enrolled in a Course!")
+            return redirect("core:course")
+
+
 # Description of  Courses
-
-
 class CourseDetailView(DetailView):
     model = Course
     template_name = "details.html"
@@ -39,13 +51,11 @@ class EnrollDetailView(DetailView):
     model = Course
     template_name = "enroll.html"
 
-    
 
-#Checkout
+# Checkout
 def checkout(request):
     context = {}
-    return render(request, "checkout.html", context)    
-
+    return render(request, "checkout.html", context)
 
 
 # Add course feature
@@ -71,21 +81,23 @@ def add_course(request, slug):
         else:
             enroll.courses.add(course_item)
             messages.info(request, "Course was added to your profile.")
-            return redirect("core:enroll-summary", slug=slug)
+            return redirect("core:course", slug=slug)
     else:
-        enrolled_date = timezone.now()        
+        enrolled_date = timezone.now()
         enroll = Enroll.objects.create(
             user=request.user, enrolled_date=enrolled_date)
         enroll.courses.add(course_item)
-        messages.info(request, "You have added course to your profile.")  
-        return redirect("core:enroll-summary", slug=slug)
+        messages.info(request, "You have added course to your profile.")
+        return redirect("core:course", slug=slug)
 
-#Removes or Deletes a Course
+# Removes or Deletes a Course
+
+
 @login_required
 def remove_course(request, slug):
-    course =  get_object_or_404(Course, slug=slug)
+    course = get_object_or_404(Course, slug=slug)
     enroll_qs = Enroll.objects.filter(user=request.user, enrolled=False)
-    # checks to see if a course object exist 
+    # checks to see if a course object exist
     if enroll_qs.exists():
         enroll = enroll_qs[0]
         if enroll.courses.filter(course__slug=course.slug).exists():
@@ -94,13 +106,15 @@ def remove_course(request, slug):
                 user=request.user,
                 enrolled=False
             )[0]
-            #removes or deletes a course object if it exists
+            # removes or deletes a course object if it exists
             enroll.courses.remove(course_item)
-            messages.info(request, "You were successfully denrolled from the  course.")
+            messages.info(
+                request, "You were successfully denrolled from the  course.")
             return redirect("core:enroll-summary", slug=slug)
         else:
             # If not redirects to course page.
-            messages.info(request, "Sorry, you are not in a course. Please add a course to continue")
+            messages.info(
+                request, "Sorry, you are not in a course. Please add a course to continue")
             return redirect("core:enroll-summary", slug=slug)
     else:
         messages.info(request, "Not enrolled in a course.")
@@ -108,11 +122,11 @@ def remove_course(request, slug):
 
 
 @login_required
-#Removing a single course quantity
+# Removing a single course quantity
 def remove_single_course_item(request, slug):
     course = get_object_or_404(Course, slug=slug)
     enroll_qs = Enroll.objects.filter(user=request.user, enrolled=False)
-    # checks to see if a course object exist 
+    # checks to see if a course object exist
     if enroll_qs.exists():
         enroll = enroll_qs[0]
         if enroll.courses.filter(course__slug=course.slug).exists():
@@ -121,17 +135,16 @@ def remove_single_course_item(request, slug):
                 user=request.user,
                 enrolled=False
             )[0]
-            #removes or deletes a course object if it exists
+            # removes or deletes a course object if it exists
             """Removing Quantity from a Course Item"""
             course_item.quantity -= 1
             course_item.save()
-            messages.info(request, "You were successfully denrolled from the  course.")
+            messages.info(
+                request, "You were successfully denrolled from the  course.")
             return redirect("core:enroll-summary")
         else:
             messages.info(request, "Course was not found!")
             return redirect("core:enroll-summary", slug=slug)
     else:
         messages.info(request, "You are currently not enrolled in a course!")
-        return redirect("core:enroll-summary", slug=slug)            
-
-
+        return redirect("core:enroll-summary", slug=slug)
