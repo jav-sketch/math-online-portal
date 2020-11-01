@@ -30,7 +30,7 @@ class CourseView(ListView):
 class EnrollSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
-            enroll = Enroll.objects.get(self.request.user, enrolled=False)
+            enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
             context = {
                 'object': enroll
             }
