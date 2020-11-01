@@ -75,7 +75,24 @@ class CourseItem(models.Model):
     def __str__(self):
         return f"{self.quantity} of {self.course.title}"
 
+    # Total Price Method     
+    def get_total_course_price(self):
+        return self.quantity * self.course.price 
 
+    # Discount Price Method
+    def get_total_discount_course_price(self):
+        return self.quantity * self.course.discount_price
+
+    # Saving Feature
+    def get_amount_saved(self):
+        return self.get_total_course_price() - self.get_total_discount_course_price()
+
+    def final_price(self):
+        if self.course.discount_price:
+            return self.get_total_discount_course_price()
+        return self.get_total_course_price()       
+
+# Teacher Model
 class Teacher(models.Model):
     name = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=50, null=True)
@@ -86,7 +103,7 @@ class Teacher(models.Model):
     def __str__(self):
         return self.name
 
-
+# Enroll Model
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -97,6 +114,14 @@ class Enroll(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    # Maximum Total    
+    def total(self):
+        total = 0
+        for course_item in self.courses.all():
+            total += course_item.final_price()
+        return total    
+
 
 
 class Heading(models.Model):
