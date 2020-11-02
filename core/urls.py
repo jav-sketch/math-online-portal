@@ -14,6 +14,6 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('add-course/<slug>/', add_course, name='add-course'),
     path('remove-course/<slug>/', remove_course, name='remove-course'),
-    path('remove-single-course/<slug>/',
-         remove_single_course_item, name='remove-single-course'),
+    # path('remove-single-course/<slug>/',
+    #      remove_single_course_item, name='remove-single-course'),
 ]
