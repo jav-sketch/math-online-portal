@@ -77,11 +77,11 @@ def add_course(request, slug):
             course_item.quantity += 1
             course_item.save()
             messages.info(request, "Course quantity has been updated.")
-            return redirect("core:course")
+            return redirect("core:enroll-summary")
         else:
             enroll.courses.add(course_item)
             messages.info(request, "Course was added to your profile.")
-            return redirect("core:course", slug=slug)
+            return redirect("core:enroll-summary")
     else:
         enrolled_date = timezone.now()
         enroll = Enroll.objects.create(
@@ -110,12 +110,12 @@ def remove_course(request, slug):
             enroll.courses.remove(course_item)
             messages.info(
                 request, "You were successfully denrolled from the  course.")
-            return redirect("core:enroll-summary", slug=slug)
+            return redirect("core:enroll-summary",)
         else:
             # If not redirects to course page.
             messages.info(
                 request, "Sorry, you are not in a course. Please add a course to continue")
-            return redirect("core:enroll-summary", slug=slug)
+            return redirect("core:course", slug=slug)
     else:
         messages.info(request, "Not enrolled in a course.")
         return redirect("core:enroll-summary", slug=slug)
@@ -137,8 +137,11 @@ def remove_single_course_item(request, slug):
             )[0]
             # removes or deletes a course object if it exists
             """Removing Quantity from a Course Item"""
-            course_item.quantity -= 1
-            course_item.save()
+            if course_item.quantity > 1:
+                course_item.quantity -= 1
+                course_item.save()
+            else:
+                enroll.courses.remove(course_item)     
             messages.info(
                 request, "You were successfully denrolled from the  course.")
             return redirect("core:enroll-summary")
