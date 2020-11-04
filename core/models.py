@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.shortcuts import reverse
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
 
 # Create your models here.
 
@@ -112,6 +114,7 @@ class Enroll(models.Model):
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
     enrolled_date = models.DateTimeField()
+    billing_address = models.ForeignKey('BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -139,3 +142,15 @@ class Section(models.Model):
 
     def __str__(self):
         return self.name
+
+# Billing Address
+class BillingAddress(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    address = models.CharField(max_length=50, null=True)                                                   
+    address_2 = models.CharField(max_length=50, null=True)
+    country =  CountryField(multiple=False)
+    zip = models.CharField(max_length=50) 
+
+    def __str__(self):
+        return self.user.username                                                  
