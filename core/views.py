@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.utils import timezone
 # Create your views here.
 from .models import *
+from .forms import *
 
 
 # Index Page
@@ -27,6 +28,7 @@ class CourseView(ListView):
     #     return context
 
 
+# Enroll Summary
 class EnrollSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
@@ -36,7 +38,7 @@ class EnrollSummaryView(LoginRequiredMixin, View):
             }
             return render(self.request, 'enroll.html', context)
         except ObjectDoesNotExist:
-            message.error(self.request, "Not Enrolled in a Course!")
+            messages.error(self.request, "Not Enrolled in a Course!")
             return redirect("core:course")
 
 
@@ -53,9 +55,50 @@ class EnrollDetailView(DetailView):
 
 
 # Checkout
-def checkout(request):
-    context = {}
-    return render(request, "checkout.html", context)
+class CheckoutView(View):
+    def get(self, *args, **kwargs):
+        # Forms
+        form = CheckoutForm()
+        context = {
+            'form': form
+        }
+        return render(self.request, "checkout.html", context)
+    # Post method
+    def post(self, *args, **kwargs):
+        form = CheckoutForm(self.request.POST or None)
+        try:
+            enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+            if form.is_valid():
+                address = form.cleaned_data.get('address')
+                address_2 = form.cleaned_data.get('address_2')
+                country = form.cleaned_data.get('country')
+                zip = form.cleaned_data.get('zip')
+
+                # TODO: add functionality these fields later
+                # same_billing_address = form.cleaned_data.get(
+                #     'same_billing_address')
+                # save_info = form.cleaned_data.get(
+                #     'ave_info')
+                payment = form.cleaned_data.get(
+                    'payment ')
+                billing_address = BillingAddress(
+                    user=self.request.user,
+                    address=address,
+                    address_2=address_2,
+                    country=country,
+                    zip=zip,
+                )
+                billing_address.save()
+                enroll.billing_address = billing_address
+                enroll.save()
+                # TODO: add redirect to payment option 
+                return redirect(
+                    'core:checkout'
+                )
+        except ObjectDoesNotExist:
+            messages.error(self.request, "Not Enrolled in a Course!")
+            return redirect("core:enroll-summary")
+        messages.warning(self.request, "Failed Checkout")
 
 
 # Add course feature
@@ -141,7 +184,7 @@ def remove_single_course_item(request, slug):
                 course_item.quantity -= 1
                 course_item.save()
             else:
-                enroll.courses.remove(course_item)     
+                enroll.courses.remove(course_item)
             messages.info(
                 request, "You were successfully denrolled from the  course.")
             return redirect("core:enroll-summary")
