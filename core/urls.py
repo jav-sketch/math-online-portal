@@ -14,6 +14,7 @@ urlpatterns = [
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('add-course/<slug>/', add_course, name='add-course'),
     path('remove-course/<slug>/', remove_course, name='remove-course'),
+    path('payment/<payment>/', PaymentView.as_view(), name='payment'),
     # path('remove-single-course/<slug>/',
     #      remove_single_course_item, name='remove-single-course'),
 ]
