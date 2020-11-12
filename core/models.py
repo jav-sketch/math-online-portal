@@ -36,37 +36,39 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-    # Shortcut Method    
-    # Enrollment Link    
+    # Shortcut Method
+    # Enrollment Link
     # def get_absolute_url(self):
     #     return reverse("core:enroll-summary", kwargs={
     #         'slug': self.slug
-    #     })    
+    #     })
 
-    # Course Details    
+    # Course Details
     def get_absolute_url_details(self):
         return reverse("core:detail", kwargs={
             'slug': self.slug
-        })    
+        })
 
-    # Add course functionality     
+    # Add course functionality
     def add_course_url(self):
         return reverse("core:add-course", kwargs={
             'slug': self.slug
-        })    
+        })
 
-    # Remove course functionality       
+    # Remove course functionality
     def remove_course_url(self):
         return reverse("core:remove-course", kwargs={
             'slug': self.slug
         })
 
-    def remove_single_course_item_url(self):        
+    def remove_single_course_item_url(self):
         return reverse("core:remove-single-course", kwargs={
             'slug': self.slug
         })
 
 # CourseItem Model
+
+
 class CourseItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -77,9 +79,9 @@ class CourseItem(models.Model):
     def __str__(self):
         return f"{self.quantity} of {self.course.title}"
 
-    # Total Price Method     
+    # Total Price Method
     def get_total_course_price(self):
-        return self.quantity * self.course.price 
+        return self.quantity * self.course.price
 
     # Discount Price Method
     def get_total_discount_course_price(self):
@@ -89,13 +91,15 @@ class CourseItem(models.Model):
     def get_amount_saved(self):
         return self.get_total_course_price() - self.get_total_discount_course_price()
 
-    # Final Price method    
+    # Final Price method
     def final_price(self):
         if self.course.discount_price:
             return self.get_total_discount_course_price()
-        return self.get_total_course_price()       
+        return self.get_total_course_price()
 
 # Teacher Model
+
+
 class Teacher(models.Model):
     name = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=50, null=True)
@@ -114,18 +118,20 @@ class Enroll(models.Model):
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
     enrolled_date = models.DateTimeField()
-    billing_address = models.ForeignKey('BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
+    billing_address = models.ForeignKey(
+        'BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
+    payment = models.ForeignKey(
+        'Payment', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
 
-    # Maximum Total    
+    # Maximum Total
     def total(self):
         total = 0
         for course_item in self.courses.all():
             total += course_item.final_price()
-        return total    
-
+        return total
 
 
 class Heading(models.Model):
@@ -144,13 +150,26 @@ class Section(models.Model):
         return self.name
 
 # Billing Address
+
+
 class BillingAddress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    address = models.CharField(max_length=50, null=True)                                                   
+    address = models.CharField(max_length=50, null=True)
     address_2 = models.CharField(max_length=50, null=True)
-    country =  CountryField(multiple=False)
-    zip = models.CharField(max_length=50) 
+    country = CountryField(multiple=False)
+    zip = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.user.username                                                  
+        return self.user.username
+
+
+class Payment(models.Model):
+    stripe_charge_id = models.CharField(max_length=50)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.SET_NULL, blank=True, null=True)
+    amount = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
