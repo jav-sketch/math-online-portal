@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,7 +10,8 @@ from django.utils import timezone
 # Create your views here.
 from .models import *
 from .forms import *
-
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Index Page
 class HomeView(ListView):
@@ -64,6 +66,7 @@ class CheckoutView(View):
         }
         return render(self.request, "checkout.html", context)
     # Post method
+
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
@@ -79,8 +82,7 @@ class CheckoutView(View):
                 #     'same_billing_address')
                 # save_info = form.cleaned_data.get(
                 #     'ave_info')
-                payment = form.cleaned_data.get(
-                    'payment ')
+                payment = form.cleaned_data.get('payment')
                 billing_address = BillingAddress(
                     user=self.request.user,
                     address=address,
@@ -91,14 +93,103 @@ class CheckoutView(View):
                 billing_address.save()
                 enroll.billing_address = billing_address
                 enroll.save()
-                # TODO: add redirect to payment option 
-                return redirect(
-                    'core:checkout'
-                )
+                if payment == 'Stripe':
+                    return redirect('core:payment', payment='Stripe')
+                elif payment == 'Paypal':
+                    return redirect('core:payment', payment='Paypal')
+                elif payment == 'MMG':
+                    return redirect('core:payment', payment='MMG')
+                else:
+                    messages.warning(
+                        self.request, "Invalid Payment Option Selected. Please Try Again!")
+                    return redirect('core:checkout')
+            messages.warning(
+                self.request, "Invalid Payment Option Selected. Please Try Again!")
+            return redirect('core:checkout')
         except ObjectDoesNotExist:
             messages.error(self.request, "Not Enrolled in a Course!")
             return redirect("core:enroll-summary")
-        messages.warning(self.request, "Failed Checkout")
+
+
+# Payment
+class PaymentView(View):
+    def get(self, *args, **kwargs):
+        # Enroll
+        enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+        context = {
+            'enroll': enroll 
+        }
+        return render(self.request, "payment.html", context)
+
+    def post(self, *args, **kwargs):
+        enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+        token = self.request.POST.get('stripeToken')
+        amount = int(enroll.total() * 100)
+
+        try:
+            # Creates the charge
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency="gyd",
+                source=token,
+                description="Charge for javonbrowne@gmail.com"
+            )
+            # Create the payment
+            payment = Payment()
+            payment.stripe_charge_id = charge['id']
+            payment.user = self.request.user
+            payment.amount = enroll.total()
+            payment.save()
+
+            # Assign payment to enroll
+            enroll.enrolled = True
+            enroll.payment = payment
+            enroll.save()
+            messages.success(
+                self.request, "payment was successfully processed.")
+            return redirect("core:index")
+        except stripe.error.CardError as e:
+            # Since it's a decline, stripe.error.CardError will be caught
+            messages.error(
+                self.request, f"{e.user_message}")
+            # print('Status is: %s' % e.http_status)
+            # print('Code is: %s' % e.code)
+            # # param is '' in this case
+            # print('Param is: %s' % e.param)
+            # print('Message is: %s' % e.user_message)
+            return redirect("core:index")
+        except stripe.error.RateLimitError as e:
+            # Too many requests made to the API too quickly
+            messages.error(
+                self.request, "Rate Limit Error.")
+            return redirect("core:index")
+        except stripe.error.InvalidRequestError as e:
+            # Invalid parameters were supplied to Stripe's API
+            messages.error(
+                self.request, "Invalid parameters.")
+            return redirect("core:index")
+        except stripe.error.AuthenticationError as e:
+            # Authentication with Stripe's API failed
+            # (maybe you changed API keys recently)
+            messages.error(
+                self.request, "Not Authenticated")
+            return redirect("core:index")
+        except stripe.error.APIConnectionError as e:
+            # Network communication with Stripe failed
+            messages.error(
+                self.request, "Network Error")
+            return redirect("core:index")
+        except stripe.error.StripeError as e:
+            # Display a very generic error to the user, and maybe send
+            # yourself an email
+            messages.error(
+                self.request, "Something went wrong, you were not charged. Please try again.")
+            return redirect("core:index")
+        except Exception as e:
+            # Something else happened, completely unrelated to Stripe
+            messages.error(
+                self.request, "A serious error occurred. We have been notified.")
+            return redirect("core:index")
 
 
 # Add course feature
