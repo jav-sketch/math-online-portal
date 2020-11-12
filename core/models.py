@@ -173,3 +173,8 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def payment_url(self):
+        return reverse("core:payment", kwargs={
+            'payment': self.payment
+        })    
