@@ -14,6 +14,8 @@ import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Index Page
+
+
 class HomeView(ListView):
     model = Heading
     template_name = "index.html"
@@ -62,26 +64,26 @@ class CheckoutView(View):
         # Forms
         form = CheckoutForm()
         context = {
-            'form': form
+            'form': form,
         }
         return render(self.request, "checkout.html", context)
-    # Post method
+    # Post Method
 
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
+        print(self.request.POST)
         try:
             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
             if form.is_valid():
+                print(form.cleaned_data)
+                print("Form is valid")
                 address = form.cleaned_data.get('address')
                 address_2 = form.cleaned_data.get('address_2')
                 country = form.cleaned_data.get('country')
                 zip = form.cleaned_data.get('zip')
-
-                # TODO: add functionality these fields later
-                # same_billing_address = form.cleaned_data.get(
-                #     'same_billing_address')
-                # save_info = form.cleaned_data.get(
-                #     'ave_info')
+                same_billing_address = form.cleaned_data.get(
+                    'same_billing_address')
+                save_info = form.cleaned_data.get('save_info')
                 payment = form.cleaned_data.get('payment')
                 billing_address = BillingAddress(
                     user=self.request.user,
@@ -100,16 +102,23 @@ class CheckoutView(View):
                 elif payment == 'MMG':
                     return redirect('core:payment', payment='MMG')
                 else:
-                    messages.warning(
-                        self.request, "Invalid Payment Option Selected. Please Try Again!")
-                    return redirect('core:checkout')
-            messages.warning(
-                self.request, "Invalid Payment Option Selected. Please Try Again!")
-            return redirect('core:checkout')
+                    messages.warning(self.request,
+                    "Invalid payment selection, please try again!")
+                    return redirect("core:checkout")
+            payment = form.cleaned_data.get('payment')        
+            if payment == 'Stripe':
+                    return redirect('core:payment', payment='Stripe')
+            elif payment == 'Paypal':
+                    return redirect('core:payment', payment='Paypal')        
+            elif payment == 'MMG':
+                    return redirect('core:payment', payment='MMG')    
+            else:
+                messages.warning(self.request,
+                    "Invalid payment selection, please try again!")
+                return redirect("core:checkout")                
         except ObjectDoesNotExist:
-            messages.error(self.request, "Not Enrolled in a Course!")
-            return redirect("core:enroll-summary")
-
+            messages.warning(self.request, "You are not in any course!")
+            return redirect("core:enroll-summary")   
 
 # Payment
 class PaymentView(View):
@@ -125,7 +134,6 @@ class PaymentView(View):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
         token = self.request.POST.get('stripeToken')
         amount = int(enroll.total() * 100)
-
         try:
             # Creates the charge
             charge = stripe.Charge.create(
@@ -225,8 +233,6 @@ def add_course(request, slug):
         return redirect("core:course", slug=slug)
 
 # Removes or Deletes a Course
-
-
 @login_required
 def remove_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
