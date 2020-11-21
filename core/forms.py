@@ -19,6 +19,6 @@ class CheckoutForm(forms.Form):
         'class': 'custom-select d-block w-100'
     }))
     zip = forms.CharField()
-    same_billing_address = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-    save_info = forms.BooleanField(required=False, widget=forms.CheckboxInput())
-    payment = forms.ChoiceField(widget=forms.RadioSelect,choices=PAYMENT_CHOICES)
+    same_billing_address = forms.BooleanField(required=False)
+    save_info = forms.BooleanField(required=False)
+    payment = forms.ChoiceField(widget=forms.RadioSelect,choices=PAYMENT_CHOICES, required=False)
