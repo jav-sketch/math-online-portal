@@ -172,9 +172,4 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
-
-    def payment_url(self):
-        return reverse("core:payment", kwargs={
-            'payment': self.payment
-        })    
+        return self.user.username  
