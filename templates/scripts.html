@@ -1,19 +1,31 @@
 {% load static %}
 <!-- SCRIPTS -->
-  <!-- JQuery -->
-  <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
-  <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-  <!-- Material Design Javascript -->
-  <script type="text/javascript" src="{% static 'js/material.min.js' %}"></script>
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
-  
-  <!-- <script type="text/javascript" src="{% static 'js/underline_scroll.js' %}"></script> -->
-  <!-- Initializations -->
-  <script type="text/javascript">
-    // Animations initialization
-    new WOW().init();
-  </script>  
+<!-- JQuery -->
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<!-- Material Design Javascript -->
+<script type="text/javascript" src="{% static 'js/material.min.js' %}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/underline_scroll.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'js/active-state-nav.js' %}"></script> -->
+<!-- Initializations -->
+<script type="text/javascript">
+  // Animation init
+  new WOW().init();
+
+  //Modal
+  $('#myModal').on('shown.bs.modal', function () {
+    $('#myInput').focus()
+  })
+
+  // Material Select Initialization
+  $(document).ready(function () {
+    $('.mdb-select').material_select();
+  });
+
+</script>
