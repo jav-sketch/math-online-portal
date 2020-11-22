@@ -1,23 +1,17 @@
 {% load enroll_template_tags %}
 {% load static %}
-<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+<nav  class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand waves-effect" href="{% url 'core:index' %}" target="">
-        <img class="d-none d-sm-block" src="{% static 'img/SCMA-web-logo.png' %}" style="width: 150px; height: 50px;"alt="web-logo">
-        <span class="blue-text d-sm-block d-md-none">SCMA GUYANA</span>
+    <a class="navbar-brand waves-effect text-primary" href="{% url 'core:index' %}" target="">
+      <!-- <img class="d-none d-sm-block" src="{% static 'img/SCMA-web-logo.png' %}" style="width: 150px; height: 50px;"alt="web-logo"> -->
+      <span class="d-none d-md-block">Smart Choice Math Academy</span>
+      <span class="blue-text d-sm-block d-md-none">SCMA GUYANA</span>
     </a>
 
     <!-- Collapse -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -25,82 +19,75 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
       <!-- Left -->
-      <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link waves-effect" href="{% url 'core:index' %}"><i class="fas fa-home"></i>Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link waves-effect" href="{% url 'core:course' %}"><i class="fas fa-book"></i>Courses</a>
-          </li> 
-          <li class="nav-item">
-            <a class="nav-link waves-effect" href=""><i class="fas fa-chalkboard-teacher"></i>About</a>
-          </li> 
+      <ul id="top-header" class="navbar-nav nav mr-auto">
+        <li class="nav-item active">
+          <a  class="nav-link waves-effect text-primary" href="{% url 'core:index' %}"><i
+              class="fas fa-home"></i>Home
+              </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link waves-effect text-primary" href="{% url 'core:course' %}"><i
+              class="fas fa-book"></i>Courses</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link waves-effect text-primary" href=""><i class="fas fa-chalkboard-teacher"></i>About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link waves-effect text-primary" href=""><i class="fas fa-envelope "></i>Contact</a>
+        </li>
       </ul>
       <!-- Left -->
 
       <!-- Right -->
       <ul class="navbar-nav nav-flex-icons">
-
-
-        <li class="nav-item  d-none d-sm-block">
-          <!--Search Form-->
-          <form class="form-inline search-bar p-2 mr-2">
-            <input class="form-control mr-sm-3" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-md btn-primary btn-rounded my-2 my-sm-0" type="submit">Search</button>
-          </form>
-          <!--Search Form-->
-        </li>
-
+       
         {% if request.user.is_authenticated %}
-    <li class="nav-item">
+        <li class="nav-item">
           <a href="{% url 'core:enroll-summary' %}" class="nav-link waves-effect">
             <span class="badge red z-depth-1 mr-1">{{ request.user|enroll_course_count }}</span>
             <i class="fas fa-shopping-cart"></i>
             <span class="clearfix d-none d-sm-inline-block"> Cart </span>
           </a>
         </li>
-
-        <!--logout-->
-        <li class="nav-item mr-sm-3">
-          <a href="{% url 'account_logout' %}" class="nav-link text-white btn btn-sm btn-danger waves-effect"
-            target="">
-            Logout
-          </a>
-        </li>
-        <!--logout-->
-
+      
         {% else %}
-        
-        <!--login-->
-        <li class="nav-item mr-2 pb-2">
-          <a class="nav-link btn btn-md btn-rounded btn-outline-info waves-effect" href="{% url 'account_login' %}">
-            <span class=""> Login </span>
-          </a>
-        </li>
-        <!--login-->
-         
-        <!--signup--> 
-        <li class="nav-item pb-2">
-          <a href="{% url 'account_signup' %}" class="nav-link btn btn-md btn-rounded btn-outline-secondary waves-effect"
-            target="">
-            SignUp
-          </a>
-        </li>
-        <!--signup--> 
+  
 
         {% endif %}
-        
 
-        <!-- <li class="nav-item">
-          <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect"
-            target="_blank">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-        </li>
-      </ul> -->
-      <!-- Right -->
-      
+      </ul>
+        <!-- Right -->
+        <!-- Right aligned menu below button -->
+        <button id="demo-menu-lower-left" class="mdl-button mdl-js-button mdl-button--icon">
+          <i class="material-icons">more_vert</i>
+        </button>
+        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
+          {% if request.user.is_authenticated %}
+          <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">
+            <a class="text-primary " href="#">Profile</a>
+          </li>
+          <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">
+            
+            <a class="text-primary " href="#">Settings</a>
+          </li>
+          <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">
+            <a class="text-primary " href="{% url 'core:enroll-summary' %}"> Enroll Summary</a>
+          </li>
+          <li class="mdl-menu__item"><a href="{% url 'account_logout' %}" class="nav-link text-white btn btn-sm btn-danger waves-effect">
+            Logout
+          </a></li>
 
+          {% else %}
+
+          <!-- Login -->
+          <li class="mdl-menu__item p-1 mb-1"><a class="btn  btn-block btn-info" href="{% url 'account_login' %}">Login</a></li>
+          <!--Login -->
+
+          <!-- Signup -->
+          <li class="mdl-menu__item p-1 mb-1"><a class="btn  btn-block btn-secondary" href="{% url 'account_signup' %}">Signup</a></li>
+          {% endif %}
+        </ul>
     </div>
 
   </div>
