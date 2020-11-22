@@ -1,25 +1,300 @@
 {% extends 'base.html' %} {% block content %}
+{% load static %}
+{% block extra_head  %}
+<style>
+  .jarallax {
+    height: 120%;
+  }
 
+  /* @media (min-width: 300px) and (max-width: 360px) {
+     
+      .jarallax {
+        height: 640px;
+      }
+    } */
+
+  @media (min-width: 800px) and (max-width: 850px) {
+    .jarallax {
+      height: 500px;
+    }
+  }
+
+  /* @media (min-width: 800px) and (max-width: 850px) {
+      .navbar:not(.top-nav-collapse) {
+        background: #1C2A48 !important;
+      }
+  
+      .navbar {
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12) !important;
+      }
+    } */
+</style>
+<style type="text/css" id="jarallax-clip-0">
+  #jarallax-container-0 {
+    clip: rect(0 1423px 900px 0);
+    clip: rect(0, 1423px, 900px, 0);
+  }
+</style>
+{% endblock  %}
 {% for heading in object_list %}
-<div style="height: 100vh">
-  <div class="flex-center background-image flex-column">
-    <div class="container text-center">
-      <h1 class="animated h1 fadeIn display-1 text-white">{{ heading.title }}</h1>
-      <h6 class="animated text-center mb-3 text-primary text-capitalize fadeIn mb-3">
-        <blockquote>
-        {{ heading.description }}
-        </blockquote>
-        -- SCMA TEAM
-      </h6>
-    </div> 
+<div id="home" class="view jarallax" data-jarallax="{&quot;speed&quot;: 0.2}"
+  style="background-image: none; background-repeat: no-repeat; background-size: cover; background-position: center center; z-index: 0;"
+  data-jarallax-original-styles="background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+  <div class="mask rgba-grey-strong">
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+      <div class="row smooth-scroll">
+        <div class="col-md-12 white-text text-center">
+          <div class="wow fadeInDown" data-wow-delay="0.2s"
+            style="visibility: visible; animation-name: fadeInDown; animation-delay: 0.2s;">
+            <h2 class="display-3 h1 font-weight-bold mb-2">{{ heading.title }}</h2>
+            <hr class="hr-light">
+            <h4 class="subtext-header mt-4 mb-5">{{ heading.description }}</h4>
+            <p class="text-bold">We offer CXC Subjects as well. Interested in knowing more? Please click the link
+              below.</p>
+          </div>
+          <a href="#learnmore" data-offset="100"
+            class="btn rounded-pill btn-info wow fadeInLeft waves-effect waves-light" data-wow-delay="0.2s"
+            style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.2s;">Learn
+            More</a>
+          <a href="{% url 'core:course' %}" data-offset="100"
+            class="btn rounded-pill btn-orange text-white wow fadeInRight waves-effect waves-light" data-wow-delay="0.2s"
+            style="visibility: visible; animation-name: fadeInRight; animation-delay: 0.2s;">Courses</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="jarallax-container-0"
+    style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: -100;">
+    <div
+      style="background-position: 50% 50%; background-size: cover; background-repeat: no-repeat; background-image: url(); position: fixed; top: 0px; left: 0px; width: 1423px; height: 900px; overflow: hidden; pointer-events: none; margin-top: 0px; transform: translate3d(0px, 0px, 0px);">
+    </div>
   </div>
 </div>
 {% endfor %}
 
 
-<!--Aim Section-->
-{% include 'section.html' %}
-<!--Aim Section-->
+
+<main>
+  <!--Aim Section-->
+  {% include 'section.html' %}
+  <!--Aim Section-->
+
+  <!--Organizational Issues-->
+  {% include 'section_2.html' %}
+
+
+  <!--Streak-->
+  {% include 'streak.html' %}
+
+  <!--Top Courses Sections-->
+  <div class="container-fluid background-r">
+    <div class="container py-3">
+  
+      <!--Section: Blog v.2-->
+      <section class="extra-margins text-center">
+  
+        <h2 class="text-center mb-5 my-5 pt-4 pb-4 font-weight-bold"> Top Courses</h2>
+        
+        <!--Grid row-->
+        <div class="row mb-5 pb-3">
+  
+          <!--Grid column one-->
+          <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
+            style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
+  
+            <!--Card Light-->
+            <div class="card">
+              <!--Card image-->
+              <div class="view overlay">
+                <img src="https://mdbootstrap.com/img/Photos/Others/images/51.jpg" class="card-img-top" alt="">
+                <a>
+                  <div class="mask rgba-white-slight waves-effect waves-light"></div>
+                </a>
+              </div>
+              <!--/.Card image-->
+              <!--Card content-->
+              <div class="card-body">
+  
+                <!--Title-->
+                <h4 class="card-title darkgrey-text">
+                  <strong>Full-Time Package</strong>
+                </h4>
+                <hr>
+                <!--Text-->
+                <p class="font-small">Some quick example text to build on the card title and make up
+                  the bulk of the
+                  card's
+                  content.
+                </p>
+                <a href="#" class="black-text d-flex flex-row-reverse">
+                  <p class="waves-effect p-2 font-small blue-text mb-0">Read more
+                    <i class="fas fa-long-arrow-alt-right ml-2" aria-hidden="true"></i>
+                  </p>
+                </a>
+              </div>
+              <!--/.Card content-->
+            </div>
+            <!--/.Card Light-->
+  
+          </div>
+          <!--Grid column one-->
+  
+          <!--Grid column two-->
+          <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
+            style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
+  
+            <!--Card Light-->
+            <div class="card">
+              <!--Card image-->
+              <div class="view overlay">
+                <img src="https://mdbootstrap.com/img/Photos/Others/images/51.jpg" class="card-img-top" alt="">
+                <a>
+                  <div class="mask rgba-white-slight waves-effect waves-light"></div>
+                </a>
+              </div>
+              <!--/.Card image-->
+              <!--Card content-->
+              <div class="card-body">
+  
+                <!--Title-->
+                <h4 class="card-title darkgrey-text">
+                  <strong>Evening Package</strong>
+                </h4>
+                <hr>
+                <!--Text-->
+                <p class="font-small">Some quick example text to build on the card title and make up
+                  the bulk of the
+                  card's
+                  content.
+                </p>
+                <a href="#" class="black-text d-flex flex-row-reverse">
+                  <p class="waves-effect p-2 font-small blue-text mb-0">Read more
+                    <i class="fas fa-long-arrow-alt-right ml-2" aria-hidden="true"></i>
+                  </p>
+                </a>
+              </div>
+              <!--/.Card content-->
+            </div>
+            <!--/.Card Light-->
+  
+          </div>
+          <!--Grid column  two-->
+
+          <!--Grid column three-->
+          <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
+            style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
+  
+            <!--Card Light-->
+            <div class="card">
+              <!--Card image-->
+              <div class="view overlay">
+                <img src="https://mdbootstrap.com/img/Photos/Others/images/51.jpg" class="card-img-top" alt="">
+                <a>
+                  <div class="mask rgba-white-slight waves-effect waves-light"></div>
+                </a>
+              </div>
+              <!--/.Card image-->
+              <!--Card content-->
+              <div class="card-body">
+  
+                <!--Title-->
+                <h4 class="card-title darkgrey-text">
+                  <strong>After School</strong>
+                </h4>
+                <hr>
+                <!--Text-->
+                <p class="font-small">Some quick example text to build on the card title and make up
+                  the bulk of the
+                  card's
+                  content.
+                </p>
+                <a href="#" class="black-text d-flex flex-row-reverse">
+                  <p class="waves-effect p-2 font-small blue-text mb-0">Read more
+                    <i class="fas fa-long-arrow-alt-right ml-2" aria-hidden="true"></i>
+                  </p>
+                </a>
+              </div>
+              <!--/.Card content-->
+            </div>
+            <!--/.Card Light-->
+  
+          </div>
+          <!--Grid column  three-->
+
+          <!--Grid column four-->
+          <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
+            style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
+  
+            <!--Card Light-->
+            <div class="card">
+              <!--Card image-->
+              <div class="view overlay">
+                <img src="https://mdbootstrap.com/img/Photos/Others/images/51.jpg" class="card-img-top" alt="">
+                <a>
+                  <div class="mask rgba-white-slight waves-effect waves-light"></div>
+                </a>
+              </div>
+              <!--/.Card image-->
+              <!--Card content-->
+              <div class="card-body">
+  
+                <!--Title-->
+                <h4 class="card-title darkgrey-text">
+                  <strong>Private Tutoring</strong>
+                </h4>
+                <hr>
+                <!--Text-->
+                <p class="font-small">Some quick example text to build on the card title and make up
+                  the bulk of the
+                  card's
+                  content.
+                </p>
+                <a href="#" class="black-text d-flex flex-row-reverse">
+                  <p class="waves-effect p-2 font-small blue-text mb-0">Read more
+                    <i class="fas fa-long-arrow-alt-right ml-2" aria-hidden="true"></i>
+                  </p>
+                </a>
+              </div>
+              <!--/.Card content-->
+            </div>
+            <!--/.Card Light-->
+  
+          </div>
+          <!--Grid column  four-->
+        
+  
+        </div>
+        <!--First row-->
+  
+      </section>
+      <!--Section: Blog v.2-->
+  
+    </div>
+  </div>
+  <!--Top Courses Sections-->
+
+
+  {% include 'review.html' %}
+
+
+
+</main>
+
+<script>
+  //Animation init
+  new WOW().init();
+
+  //Modal
+  $('#myModal').on('shown.bs.modal', function () {
+    $('#myInput').focus()
+  })
+
+  // Material Select Initialization
+  $(document).ready(function () {
+    $('.mdb-select').material_select();
+  });
+
+</script>
 
 {% endblock %}
 <!-- End your project here-->
