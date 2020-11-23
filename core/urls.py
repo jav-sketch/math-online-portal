@@ -1,10 +1,13 @@
 from django.urls import path
 from .views import *
 # from . import views
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
 
 
 app_name = 'core'
 urlpatterns = [
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('img/favicon.ico'))),
     path('', HomeView.as_view(), name='index'),
     path('course/', CourseView.as_view(), name="course"),
     path('course/<slug>/', CourseView.as_view(), name="course"),
