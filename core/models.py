@@ -32,7 +32,7 @@ class Course(models.Model):
     schedule = models.TextField(max_length=200)
     description = models.TextField()
     slug = models.SlugField()
-
+    image = models.ImageField()
     def __str__(self):
         return self.title
 
@@ -173,3 +173,11 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.user.username  
+
+
+#Discount method
+class Coupon(models.Model):
+    code = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.code
