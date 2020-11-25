@@ -103,30 +103,32 @@ class CheckoutView(View):
                     return redirect('core:payment', payment='MMG')
                 else:
                     messages.warning(self.request,
-                    "Invalid payment selection, please try again!")
+                                     "Invalid payment selection, please try again!")
                     return redirect("core:checkout")
-            payment = form.cleaned_data.get('payment')        
+            payment = form.cleaned_data.get('payment')
             if payment == 'Stripe':
-                    return redirect('core:payment', payment='Stripe')
+                return redirect('core:payment', payment='Stripe')
             elif payment == 'Paypal':
-                    return redirect('core:payment', payment='Paypal')        
+                return redirect('core:payment', payment='Paypal')
             elif payment == 'MMG':
-                    return redirect('core:payment', payment='MMG')    
+                return redirect('core:payment', payment='MMG')
             else:
                 messages.warning(self.request,
-                    "Invalid payment selection, please try again!")
-                return redirect("core:checkout")                
+                                 "Invalid payment selection, please try again!")
+                return redirect("core:checkout")
         except ObjectDoesNotExist:
             messages.warning(self.request, "You are not in any course!")
-            return redirect("core:enroll-summary")   
+            return redirect("core:enroll-summary")
 
 # Payment
+
+
 class PaymentView(View):
     def get(self, *args, **kwargs):
         # Enroll
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
         context = {
-            'enroll': enroll 
+            'enroll': enroll
         }
         return render(self.request, "payment.html", context)
 
@@ -150,6 +152,10 @@ class PaymentView(View):
             payment.save()
 
             # Assign payment to enroll
+            course_items = enroll.courses.all()
+            course_items.update(enrolled=True)
+            for course in course_items:
+                course.save()
             enroll.enrolled = True
             enroll.payment = payment
             enroll.save()
@@ -233,6 +239,8 @@ def add_course(request, slug):
         return redirect("core:course", slug=slug)
 
 # Removes or Deletes a Course
+
+
 @login_required
 def remove_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
@@ -291,3 +299,23 @@ def remove_single_course_item(request, slug):
     else:
         messages.info(request, "You are currently not enrolled in a course!")
         return redirect("core:enroll-summary", slug=slug)
+
+# Shortcut method
+def get_coupon(request, code):
+    try:
+        coupon = Coupon.objects.get(code=code)
+        return coupon
+    except ObjectDoesNotExist:
+        messages.info(request, "This coupon does not exist.")
+        return redirect('core:checkout')
+
+def add_coupon(request, code):
+    try:
+        enroll = Enroll.objects.get(user=request.user, enrolled=False)
+        enroll.coupon = get_coupon(request, code=code)
+        enroll.save()
+        messages.info(request, "Coupon was redeemed successfuly")
+        return redirect('core:checkout')
+    except ObjectDoesNotExist:
+        messages.info(request, "You are currently not enrolled in a course!")
+        return redirect('core:checkout')    
