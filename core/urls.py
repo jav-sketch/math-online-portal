@@ -20,4 +20,6 @@ urlpatterns = [
     path('payment/<payment>/', PaymentView.as_view(), name='payment'),
     # path('remove-single-course/<slug>/',
     #      remove_single_course_item, name='remove-single-course'),
+    path('add_coupon/<code>/',
+        add_coupon, name='add_coupon'),
 ]
