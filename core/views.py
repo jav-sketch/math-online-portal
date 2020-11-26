@@ -58,15 +58,23 @@ class EnrollDetailView(DetailView):
     template_name = "enroll.html"
 
 
-# Checkout
+# Checkout Method
 class CheckoutView(View):
     def get(self, *args, **kwargs):
-        # Forms
-        form = CheckoutForm()
-        context = {
-            'form': form,
-        }
-        return render(self.request, "checkout.html", context)
+        try:
+            enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+            form = CheckoutForm()
+            context = {
+                'form': form,
+                'couponform': CouponForm(),
+                'enroll': enroll,
+                'DISPLAY_COUPON_FORM': True
+            }
+            return render(self.request, "checkout.html", context)
+        except ObjectDoesNotExist:
+            messages.info(
+                self.request, "You are currently not enrolled in a course!")
+            return redirect('core:checkout')
     # Post Method
 
     def post(self, *args, **kwargs):
@@ -127,11 +135,16 @@ class PaymentView(View):
     def get(self, *args, **kwargs):
         # Enroll
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
-        context = {
-            'enroll': enroll
-        }
-        return render(self.request, "payment.html", context)
-
+        if enroll.billing_address:
+            context = {
+                'enroll': enroll,
+                'DISPLAY_COUPON_FORM': False
+            }
+            return render(self.request, "payment.html", context)
+        else:
+            messages.warning(self.request, "You have not added a billing address")
+            return redirect("core:checkout")
+    # Post Method         
     def post(self, *args, **kwargs):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
         token = self.request.POST.get('stripeToken')
@@ -301,6 +314,8 @@ def remove_single_course_item(request, slug):
         return redirect("core:enroll-summary", slug=slug)
 
 # Shortcut method
+
+
 def get_coupon(request, code):
     try:
         coupon = Coupon.objects.get(code=code)
@@ -309,13 +324,18 @@ def get_coupon(request, code):
         messages.info(request, "This coupon does not exist.")
         return redirect('core:checkout')
 
-def add_coupon(request, code):
-    try:
-        enroll = Enroll.objects.get(user=request.user, enrolled=False)
-        enroll.coupon = get_coupon(request, code=code)
-        enroll.save()
-        messages.info(request, "Coupon was redeemed successfuly")
-        return redirect('core:checkout')
-    except ObjectDoesNotExist:
-        messages.info(request, "You are currently not enrolled in a course!")
-        return redirect('core:checkout')    
+
+class AddCouponView(View):
+    def post(self, *args, **kwargs):
+        form = CouponForm(self.request.POST or None)
+        if form.is_valid():
+            try:
+                code = form.cleaned_data.get('code')
+                enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+                enroll.coupon = get_coupon(self.request, code)
+                enroll.save()
+                messages.info(self.request, "Coupon was redeemed successfully")
+                return redirect('core:checkout')
+            except ObjectDoesNotExist:
+                messages.info(self.request, "You are currently not enrolled in a course!")
+                return redirect('core:checkout')            
