@@ -79,12 +79,9 @@ class CheckoutView(View):
 
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
-        print(self.request.POST)
         try:
             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
             if form.is_valid():
-                print(form.cleaned_data)
-                print("Form is valid")
                 address = form.cleaned_data.get('address')
                 address_2 = form.cleaned_data.get('address_2')
                 country = form.cleaned_data.get('country')
@@ -103,48 +100,42 @@ class CheckoutView(View):
                 billing_address.save()
                 enroll.billing_address = billing_address
                 enroll.save()
+                print(enroll.billing_address)
+                payment = form.cleaned_data.get('payment')
                 if payment == 'Stripe':
                     return redirect('core:payment', payment='Stripe')
-                elif payment == 'Paypal':
+                if payment == 'Paypal':
                     return redirect('core:payment', payment='Paypal')
-                elif payment == 'MMG':
+                if payment == 'MMG':
                     return redirect('core:payment', payment='MMG')
                 else:
-                    messages.warning(self.request,
-                                     "Invalid payment selection, please try again!")
+                    messages.warning(self.request, "Invalid payment selection, please try again!")
                     return redirect("core:checkout")
             payment = form.cleaned_data.get('payment')
             if payment == 'Stripe':
                 return redirect('core:payment', payment='Stripe')
-            elif payment == 'Paypal':
+            if payment == 'Paypal':
                 return redirect('core:payment', payment='Paypal')
-            elif payment == 'MMG':
+            if payment == 'MMG':
                 return redirect('core:payment', payment='MMG')
             else:
-                messages.warning(self.request,
-                                 "Invalid payment selection, please try again!")
-                return redirect("core:checkout")
+                messages.warning(self.request, "Invalid payment selection, please try again!")
+                return redirect("core:checkout")         
         except ObjectDoesNotExist:
             messages.warning(self.request, "You are not in any course!")
             return redirect("core:enroll-summary")
 
 # Payment
-
-
 class PaymentView(View):
     def get(self, *args, **kwargs):
-        # Enroll
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
-        if enroll.billing_address:
-            context = {
-                'enroll': enroll,
-                'DISPLAY_COUPON_FORM': False
-            }
-            return render(self.request, "payment.html", context)
-        else:
-            messages.warning(self.request, "You have not added a billing address")
-            return redirect("core:checkout")
-    # Post Method         
+        context = {
+            'enroll': enroll,
+            'DISPLAY_COUPON_FORM': False
+        }
+        return render(self.request, "payment.html", context)
+    # Post Method
+
     def post(self, *args, **kwargs):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
         token = self.request.POST.get('stripeToken')
@@ -172,6 +163,7 @@ class PaymentView(View):
             enroll.enrolled = True
             enroll.payment = payment
             enroll.save()
+
             messages.success(
                 self.request, "payment was successfully processed.")
             return redirect("core:index")
@@ -331,11 +323,13 @@ class AddCouponView(View):
         if form.is_valid():
             try:
                 code = form.cleaned_data.get('code')
-                enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+                enroll = Enroll.objects.get(
+                    user=self.request.user, enrolled=False)
                 enroll.coupon = get_coupon(self.request, code)
                 enroll.save()
                 messages.info(self.request, "Coupon was redeemed successfully")
                 return redirect('core:checkout')
             except ObjectDoesNotExist:
-                messages.info(self.request, "You are currently not enrolled in a course!")
-                return redirect('core:checkout')            
+                messages.info(
+                    self.request, "You are currently not enrolled in a course!")
+                return redirect('core:checkout')
