@@ -132,6 +132,7 @@ class Enroll(models.Model):
         total = 0
         for course_item in self.courses.all():
             total += course_item.final_price()
+        total -= self.coupon.amount
         return total
 
 
@@ -179,6 +180,7 @@ class Payment(models.Model):
 #Discount method
 class Coupon(models.Model):
     code = models.CharField(max_length=15)
+    amount = models.FloatField()
 
     def __str__(self):
         return self.code
