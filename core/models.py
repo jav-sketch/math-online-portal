@@ -33,6 +33,7 @@ class Course(models.Model):
     description = models.TextField()
     slug = models.SlugField()
     image = models.ImageField()
+
     def __str__(self):
         return self.title
 
@@ -111,6 +112,8 @@ class Teacher(models.Model):
         return self.name
 
 # Enroll Model
+
+
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -122,8 +125,19 @@ class Enroll(models.Model):
         'BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
     payment = models.ForeignKey(
         'Payment', on_delete=models.SET_NULL, blank=True, null=True)
-    coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, blank=True, null=True)    
+    coupon = models.ForeignKey(
+        'Coupon', on_delete=models.SET_NULL, blank=True, null=True)
 
+    # Use case of the process to be outlined    
+    ''' 
+    1. User enrolled into a a Course
+    2. Adding a Billing address
+    3. Payment 
+    (Preprocessing, processing, etc.)
+    4. Student can start Courses
+    5. Student can denroll from course
+    6. Refunds
+    '''    
     def __str__(self):
         return self.user.username
 
@@ -132,7 +146,8 @@ class Enroll(models.Model):
         total = 0
         for course_item in self.courses.all():
             total += course_item.final_price()
-        total -= self.coupon.amount
+        if self.coupon:
+            total -= self.coupon.amount    
         return total
 
 
@@ -174,10 +189,10 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username  
+        return self.user.username
 
 
-#Discount method
+# Discount method
 class Coupon(models.Model):
     code = models.CharField(max_length=15)
     amount = models.FloatField()
