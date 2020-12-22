@@ -383,7 +383,7 @@ class RefundRequestView(View):
                 refund.email = email
                 refund.save()
 
-                messages.info(self.request, "Your request was recieved. We will contact you sas soon as possible.")
+                messages.info(self.request, "Your request was received. We will contact you sas soon as possible.")
                 return redirect("/")
             except ObjectDoesNotExist:
                 messages.info(self.request, "This course does not exist")
