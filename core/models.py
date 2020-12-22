@@ -99,8 +99,6 @@ class CourseItem(models.Model):
         return self.get_total_course_price()
 
 # Teacher Model
-
-
 class Teacher(models.Model):
     name = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=50, null=True)
@@ -112,11 +110,10 @@ class Teacher(models.Model):
         return self.name
 
 # Enroll Model
-
-
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    ref_code = models.CharField(max_length=20)                         
     courses = models.ManyToManyField(CourseItem)
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
@@ -126,15 +123,19 @@ class Enroll(models.Model):
     payment = models.ForeignKey(
         'Payment', on_delete=models.SET_NULL, blank=True, null=True)
     coupon = models.ForeignKey(
-        'Coupon', on_delete=models.SET_NULL, blank=True, null=True)
+        'Coupon', on_delete=models.SET_NULL, blank=True, null=True)   
+    # progress = models.BooleanField(default=False)
+    # refund = models.BooleanField(default=False)
+    refund_requested = models.BooleanField(default=False)    
+    refund_granted = models.BooleanField(default=False)    
 
     # Use case of the process to be outlined    
     ''' 
     1. User enrolled into a a Course
-    2. Adding a Billing address
+    2. Adding a Billing address(failed checkout)
     3. Payment 
     (Preprocessing, processing, etc.)
-    4. Student can start Courses
+    4. Student can be enrolled in Courses
     5. Student can denroll from course
     6. Refunds
     '''    
@@ -167,8 +168,6 @@ class Section(models.Model):
         return self.name
 
 # Billing Address
-
-
 class BillingAddress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -199,3 +198,14 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class Refund(models.Model):
+    enroll = models.ForeignKey(Enroll, on_delete=models.CASCADE)
+    reason = models.TextField()
+    # ref_code = models.Charfield()
+    accepted = models.BooleanField(default=False)
+    email = models.EmailField(max_length=20)
+
+    def __str__(self):
+        return f"{self.pk}"
