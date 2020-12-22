@@ -10,12 +10,18 @@ from django.utils import timezone
 # Create your views here.
 from .models import *
 from .forms import *
+import random
+import string
 import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+
+# Creating reference code
+def create_ref_code():
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
+
+
 # Index Page
-
-
 class HomeView(ListView):
     model = Heading
     template_name = "index.html"
@@ -86,9 +92,9 @@ class CheckoutView(View):
                 address_2 = form.cleaned_data.get('address_2')
                 country = form.cleaned_data.get('country')
                 zip = form.cleaned_data.get('zip')
-                same_billing_address = form.cleaned_data.get(
-                    'same_billing_address')
-                save_info = form.cleaned_data.get('save_info')
+                # same_billing_address = form.cleaned_data.get(
+                #     'same_billing_address')
+                # save_info = form.cleaned_data.get('save_info')
                 payment = form.cleaned_data.get('payment')
                 billing_address = BillingAddress(
                     user=self.request.user,
@@ -100,40 +106,56 @@ class CheckoutView(View):
                 billing_address.save()
                 enroll.billing_address = billing_address
                 enroll.save()
-                print(enroll.billing_address)
+                if payment == 'Stripe':
+                    return redirect('core:payment', payment='Stripe')
+
+                elif payment == 'Paypal':
+                    return redirect('core:payment', payment='Paypal')
+
+                elif payment == 'MMG':
+                    return redirect('core:payment', payment='MMG')
+                else:
+                    messages.warning(
+                        self.request, "Invalid payment selection, please try again!")
+                    return redirect("core:checkout")
+            else:
                 payment = form.cleaned_data.get('payment')
                 if payment == 'Stripe':
                     return redirect('core:payment', payment='Stripe')
-                if payment == 'Paypal':
+                elif payment == 'Paypal':
                     return redirect('core:payment', payment='Paypal')
-                if payment == 'MMG':
+                elif payment == 'MMG':
                     return redirect('core:payment', payment='MMG')
                 else:
-                    messages.warning(self.request, "Invalid payment selection, please try again!")
+                    messages.warning(
+                        self.request, "Invalid payment selection, please try again!")
                     return redirect("core:checkout")
-            payment = form.cleaned_data.get('payment')
-            if payment == 'Stripe':
-                return redirect('core:payment', payment='Stripe')
-            if payment == 'Paypal':
-                return redirect('core:payment', payment='Paypal')
-            if payment == 'MMG':
-                return redirect('core:payment', payment='MMG')
-            else:
-                messages.warning(self.request, "Invalid payment selection, please try again!")
-                return redirect("core:checkout")         
         except ObjectDoesNotExist:
             messages.warning(self.request, "You are not in any course!")
             return redirect("core:enroll-summary")
 
 # Payment
+
+
 class PaymentView(View):
     def get(self, *args, **kwargs):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+        # if enroll.billing_address:
+        #     context = {
+        #         'enroll': enroll,
+        #         'DISPLAY_COUPON_FORM': False
+        #     }
+        #     return render(self.request, "payment.html", context)
+        # else:
+        #     messages.warning(
+        #         self.request, "You have not added a Billing Address. Please Add One!")
+        #     return redirect("core:checkout")
         context = {
             'enroll': enroll,
             'DISPLAY_COUPON_FORM': False
         }
         return render(self.request, "payment.html", context)
+
     # Post Method
 
     def post(self, *args, **kwargs):
@@ -160,6 +182,8 @@ class PaymentView(View):
             course_items.update(enrolled=True)
             for course in course_items:
                 course.save()
+
+            enroll.ref_code = create_ref_code()
             enroll.enrolled = True
             enroll.payment = payment
             enroll.save()
@@ -316,6 +340,8 @@ def get_coupon(request, code):
         messages.info(request, "This coupon does not exist.")
         return redirect('core:checkout')
 
+# Add Coupon
+
 
 class AddCouponView(View):
     def post(self, *args, **kwargs):
@@ -333,3 +359,32 @@ class AddCouponView(View):
                 messages.info(
                     self.request, "You are currently not enrolled in a course!")
                 return redirect('core:checkout')
+
+# Refund method
+
+
+class RefundRequestView(View):
+    def post(self, *args, **kwargs):
+        form = RefundForm(self.request.POST)
+        if form.is_valid():
+            ref_code = form.is_cleaned_data.get('ref_code')
+            message = form.is_cleaned_data.get('message')
+            email = form.is_cleaned_data.get('email')
+            # Edit enroll
+            try:
+                enroll = Enroll.objects.get(ref_code=ref_code)
+                enroll.refund_requested = True
+                enroll.save()
+
+                # store refund data
+                refund = Refund()
+                refund.enroll = enroll
+                refund.reason = message
+                refund.email = email
+                refund.save()
+
+                messages.info(self.request, "Your request was recieved. We will contact you sas soon as possible.")
+                return redirect("/")
+            except ObjectDoesNotExist:
+                messages.info(self.request, "This course does not exist")
+                return redirect("/")
