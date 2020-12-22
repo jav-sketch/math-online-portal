@@ -1,8 +1,24 @@
 from django.contrib import admin
 from .models import *
+
+# class RefundAdmin(admin.ModelAdmin):
+
+
 class EnrollAdmin(admin.ModelAdmin):
-    list_display = ['user', 'enrolled']
-    
+    list_display = ['user', 'enrolled', 'refund',
+                    'refund_requested', 'refund_granted',
+                    'payment', 'billing_address', 'coupon']
+
+    list_display_links = ['user', 'payment',
+                          'billing_address',  'coupon']
+
+    list_filter = ['enrolled', 'refund',
+                   'refund_requested', 'refund_granted']
+
+    search_fields = ['user__username',
+                     'ref_code', ]
+
+
 # Register your models here.
 admin.site.register(Course)
 admin.site.register(CourseItem)
