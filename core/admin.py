@@ -5,7 +5,7 @@ from .models import *
 
 
 class EnrollAdmin(admin.ModelAdmin):
-    list_display = ['user', 'enrolled', 'refund',
+    list_display = ['user', 'enrolled',
                     'refund_requested', 'refund_granted',
                     'payment', 'billing_address', 'coupon']
 
@@ -29,3 +29,4 @@ admin.site.register(Section)
 admin.site.register(BillingAddress)
 admin.site.register(Payment)
 admin.site.register(Coupon)
+admin.site.register(Refund)
