@@ -125,7 +125,6 @@ class Enroll(models.Model):
     coupon = models.ForeignKey(
         'Coupon', on_delete=models.SET_NULL, blank=True, null=True)   
     # progress = models.BooleanField(default=False)
-    # refund = models.BooleanField(default=False)
     refund_requested = models.BooleanField(default=False)    
     refund_granted = models.BooleanField(default=False)    
 
