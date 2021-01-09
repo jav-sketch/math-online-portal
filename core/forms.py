@@ -8,17 +8,29 @@ PAYMENT_CHOICES = (
     ('MMG', 'MMG'),
 )
 class CheckoutForm(forms.Form):
-    address = forms.CharField(widget=forms.TextInput(attrs={
-        'placeholder': '123 Main st'
-    }))
+    # address = forms.CharField(widget=forms.TextInput(attrs={
+    #     'placeholder': '123 Main st'
+    # }))
 
-    address_2 = forms.CharField(widget=forms.TextInput(attrs={
-        'placeholder': 'Apartment or Suite'
-    }))
-    country = CountryField(blank_label='(select country)').formfield(widget=CountrySelectWidget(attrs={
+    # address_2 = forms.CharField(widget=forms.TextInput(attrs={
+    #     'placeholder': 'Apartment or Suite'
+    # }))
+
+    shipping_address = forms.CharField(required=False)
+    shipping_address2 = forms.CharField(required=False)
+    shipping_country = CountryField(blank_label='(select country)').formfield(required=False, widget=CountrySelectWidget(attrs={
         'class': 'custom-select d-block w-100'
     }))
-    zip = forms.CharField()
+    shipping_zip = forms.CharField(required=False)
+    
+    billing_address = forms.CharField(required=False)
+    billing_address2 = forms.CharField(required=False)
+    billing_country = CountryField(blank_label='(select country)').formfield(required=False, widget=CountrySelectWidget(attrs={
+        'class': 'custom-select d-block w-100'
+    }))
+    billing_zip = forms.CharField(required=False)
+
+
     same_billing_address = forms.BooleanField(required=False)
     save_info = forms.BooleanField(required=False)
     payment = forms.ChoiceField(widget=forms.RadioSelect,choices=PAYMENT_CHOICES, required=False)
