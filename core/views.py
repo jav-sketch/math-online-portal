@@ -96,12 +96,13 @@ class CheckoutView(View):
                 #     'same_billing_address')
                 # save_info = form.cleaned_data.get('save_info')
                 payment = form.cleaned_data.get('payment')
-                billing_address = BillingAddress(
+                billing_address = Address(
                     user=self.request.user,
                     address=address,
                     address_2=address_2,
                     country=country,
                     zip=zip,
+                    address_type = 'Billing'
                 )
                 billing_address.save()
                 enroll.billing_address = billing_address
@@ -374,9 +375,9 @@ class RefundRequestView(View):
     def post(self, *args, **kwargs):
         form = RefundForm(self.request.POST)
         if form.is_valid():
-            ref_code = form.is_cleaned_data.get('ref_code')
-            message = form.is_cleaned_data.get('message')
-            email = form.is_cleaned_data.get('email')
+            ref_code = form.cleaned_data.get('ref_code')
+            message = form.cleaned_data.get('message')
+            email = form.cleaned_data.get('email')
             # Edit enroll
             try:
                 enroll = Enroll.objects.get(ref_code=ref_code)
@@ -390,7 +391,7 @@ class RefundRequestView(View):
                 refund.email = email
                 refund.save()
 
-                messages.info(self.request, "Your request was received. We will contact you sas soon as possible.")
+                messages.info(self.request, "Your request was received and is being processed. We will contact you as soon as possible.")
                 return redirect("core:refund-request")
             except ObjectDoesNotExist:
                 messages.info(self.request, "This course does not exist")
