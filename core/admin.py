@@ -3,6 +3,10 @@ from .models import *
 
 # class RefundAdmin(admin.ModelAdmin):
 
+def make_refund_accepted(modeladmin, request, queryset):
+    queryset.update(refund_requested=False, refund_granted=True)
+
+make_refund_accepted.short_description = 'Update enrolls to refund granted'
 
 class EnrollAdmin(admin.ModelAdmin):
     list_display = ['user', 'enrolled',
@@ -17,6 +21,7 @@ class EnrollAdmin(admin.ModelAdmin):
 
     search_fields = ['user__username',
                      'ref_code', ]
+    actions = [make_refund_accepted]                 
 
 
 # Register your models here.
