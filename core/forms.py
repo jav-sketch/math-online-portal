@@ -32,7 +32,11 @@ class CheckoutForm(forms.Form):
 
 
     same_billing_address = forms.BooleanField(required=False)
-    save_info = forms.BooleanField(required=False)
+    # set_default_shipping = forms.BooleanField(required=False)
+    # use_default_shipping = forms.BooleanField(required=False)
+    set_default_billing = forms.BooleanField(required=False)
+    use_default_billing = forms.BooleanField(required=False)
+    
     payment = forms.ChoiceField(widget=forms.RadioSelect,choices=PAYMENT_CHOICES, required=False)
 
 
