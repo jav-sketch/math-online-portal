@@ -11,10 +11,10 @@ make_refund_accepted.short_description = 'Update enrolls to refund granted'
 class EnrollAdmin(admin.ModelAdmin):
     list_display = ['user', 'enrolled',
                     'refund_requested', 'refund_granted',
-                    'payment', 'billing_address', 'shipping_address', 'coupon']
+                    'payment', 'billing_address', 'coupon']
 
     list_display_links = ['user', 'payment',
-                          'billing_address', 'shipping_address', 'coupon']
+                          'billing_address', 'coupon']
 
     list_filter = ['enrolled', 'refund',
                    'refund_requested', 'refund_granted']
