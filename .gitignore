@@ -4,6 +4,7 @@
 *.pyc
 # Specific Files & Folders#
 math_portal/settings.py
+math_portal/config.py
 core/migrations/*
 core/templatetags/*
 static/*
