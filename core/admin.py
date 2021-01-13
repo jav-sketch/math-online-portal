@@ -42,6 +42,7 @@ class AddressAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+admin.site.register(UserProfile)
 admin.site.register(Course)
 admin.site.register(CourseItem)
 admin.site.register(Teacher)
