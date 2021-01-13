@@ -185,21 +185,21 @@ class CheckoutView(View):
 class PaymentView(View):
     def get(self, *args, **kwargs):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
-        # if enroll.billing_address:
-        #     context = {
-        #         'enroll': enroll,
-        #         'DISPLAY_COUPON_FORM': False
-        #     }
-        #     return render(self.request, "payment.html", context)
-        # else:
-        #     messages.warning(
-        #         self.request, "You have not added a Billing Address. Please Add One!")
-        #     return redirect("core:checkout")
-        context = {
-            'enroll': enroll,
-            'DISPLAY_COUPON_FORM': False
-        }
-        return render(self.request, "payment.html", context)
+        if enroll.billing_address:
+            context = {
+                'enroll': enroll,
+                'DISPLAY_COUPON_FORM': False
+            }
+            return render(self.request, "payment.html", context)
+        else:
+            messages.warning(
+                self.request, "You have not added a Billing Address. Please Add One!")
+            return redirect("core:checkout")
+        # context = {
+        #     'enroll': enroll,
+        #     'DISPLAY_COUPON_FORM': False
+        # }
+        # return render(self.request, "payment.html", context)
 
     # Post Method
 
