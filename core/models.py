@@ -3,6 +3,7 @@ from django.conf import settings
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
+from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -71,9 +72,16 @@ class Course(models.Model):
             'slug': self.slug
         })
 
+#User Profile Model
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
+    one_click_purchasing = models.BooleanField()
+
+    def __str__(self):
+        return self.user.username
+
 # CourseItem Model
-
-
 class CourseItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -117,7 +125,7 @@ class Teacher(models.Model):
 class Enroll(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    ref_code = models.CharField(max_length=20)                         
+    ref_code = models.CharField(max_length=20, blank=True, null=True)                         
     courses = models.ManyToManyField(CourseItem)
     enrolled = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
@@ -218,3 +226,10 @@ class Refund(models.Model):
 
     def __str__(self):
         return f"{self.pk}"
+
+def userprofile_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        userprofile = UserProfile.objects.create(user=instance)
+
+
+post_save.connect(userprofile_receiver, sender=settings.AUTH_USER_MODEL)
