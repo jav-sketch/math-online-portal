@@ -2,6 +2,8 @@
 *.log
 *.pot
 *.pyc
+
+
 # Specific Files & Folders#
 math_portal/settings.py
 math_portal/config.py
