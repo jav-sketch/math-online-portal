@@ -34,6 +34,16 @@ class HomeView(ListView):
     model = Heading
     template_name = "index.html"
 
+# User Profile
+class ProfileView(View):
+    def get(self, *args, **kwargs):
+        user = UserProfile.objects.all()
+        context = {
+            'userprofile': UserProfile
+        }
+        return render(self.request, "profile.html", context)
+
+
 
 # Courses template
 class CourseView(ListView):
