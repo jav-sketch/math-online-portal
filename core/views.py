@@ -43,6 +43,12 @@ class ProfileView(View):
         }
         return render(self.request, "account/profile.html", context)
 
+#TODO: About view 
+
+
+
+#TODO: Contact View
+
 
 
 # Courses template
@@ -253,7 +259,7 @@ class EnrollDetailView(DetailView):
     #         return redirect("core:enroll-summary")
 
 
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
