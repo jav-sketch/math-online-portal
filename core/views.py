@@ -41,7 +41,7 @@ class ProfileView(View):
         context = {
             'userprofile': UserProfile
         }
-        return render(self.request, "profile.html", context)
+        return render(self.request, "account/profile.html", context)
 
 
 
@@ -83,6 +83,176 @@ class EnrollDetailView(DetailView):
 
 
 # Checkout Method
+
+# class CheckoutView(View):
+#     def get(self, *args, **kwargs):
+#         try:
+#             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+#             form = CheckoutForm()
+#             context = {
+#                 'form': form,
+#                 'couponform': CouponForm(),
+#                 'enroll': enroll,
+#                 'DISPLAY_COUPON_FORM': True
+#             }
+#             shipping_address_qs = Address.objects.filter(
+#                 user=self.request.user,
+#                 address_type='Shipping',
+#                 default=True
+#             )
+#             if shipping_address_qs.exists():
+#                 context.update(
+#                     {'default_shipping_address': shipping_address_qs[0]}
+#                 )
+
+#             billing_address_qs = Address.objects.filter(
+#                 user=self.request.user,
+#                 address_type='Billing',
+#                 default=True
+#             )
+
+#             if billing_address_qs.exists():
+#                 context.update(
+#                     {'default_billing_address':
+#                     billing_address_qs[0]}
+#                 )
+#             return render(self.request, "checkout.html", context)            
+#         except ObjectDoesNotExist:
+#             messages.info(
+#                 self.request, "You are currently not enrolled in a course!")
+#             return redirect('core:checkout')
+    # Post Method
+    # def post(self, *args, **kwargs):
+    #     form = CheckoutForm(self.request.POST or None)
+    #     try:
+    #         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
+    #         if form.is_valid():
+
+    #             use_default_shipping = form.cleaned_data.get('use_default_shipping')
+
+    #             if use_default_shipping:
+    #                 print("Using deault shipping address")
+    #                 address_qs = Address.objects.filter(
+    #                     user=self.request.user,
+    #                     address_type='Shipping',
+    #                     default=True
+    #                 )
+    #                 if address_qs.exists():
+    #                     shipping_address = address_qs[0] 
+    #                     enroll.shipping_address = shipping_address
+    #                     enroll.save()
+    #                 else:
+    #                     messages.info(self.request, "No Default shipping address is available!")
+    #                     return redirect('core:checkout')
+    #             else:
+    #                 print("User is entering new shipping address.")
+    #                 shipping_address1 = form.cleaned_data.get('shipping_address')
+    #                 shipping_address2 = form.cleaned_data.get('shipping_address2')
+    #                 shipping_country = form.cleaned_data.get('shipping_country')
+    #                 shipping_zip = form.cleaned_data.get('shipping_zip')
+
+    #                 if is_valid_form([shipping_address1, shipping_country, shipping_zip]):
+    #                     shipping_address = Address(
+    #                         user=self.request.user,
+    #                         address=shipping_address1,
+    #                         address_2=shipping_address2,
+    #                         country=shipping_country,
+    #                         zip=shipping_zip,
+    #                         address_type='Shipping'
+    #                     )
+    #                     shipping_address.save()
+
+    #                     enroll.shipping_address = shipping_address
+    #                     enroll.save()
+
+    #                     set_default_shipping = form.cleaned_data.get('set_default_shipping')
+
+    #                     if set_default_shipping:
+    #                         shipping_address.default = True
+    #                         shipping_address.save()
+
+    #                 else:
+    #                     messages.info(
+    #                         self.request, "Please fill in the required shipping address fields."
+    #                     )        
+
+
+    #             use_default_billing = form.cleaned_data.get(
+    #                 'use_default_billing')
+    #             same_billing_address = form.cleaned_data.get('same_billing_address')
+
+
+    #             if same_billing_address:
+    #                 billing_address = shipping_address
+    #                 billing_address.pk = None
+    #                 billing_address.save()
+    #                 billing_address.address_type = 'Billing'
+    #                 billing_address.save()
+    #                 enroll.billing_address = billing_address
+    #                 enroll.save()
+
+    #             elif use_default_billing:
+    #                 print("Using default billing address")
+    #                 address_qs = Address.objects.filter(
+    #                     user=self.request.user,
+    #                     address_type='Billing',
+    #                     default=True
+
+    #                 )
+    #                 # checks if user has a default billing address
+    #                 if address_qs.exists():
+    #                     billing_address = address_qs[0]
+    #                     enroll.billing_address = billing_address
+    #                     enroll.save()
+    #                 else:
+    #                     messages.info(self.request, "No default billing address is available")
+    #                     return redirect('core:checkout')
+    #             else:
+    #                 print("Use is entering a new billing address"
+    #                 )
+    #                 billing_address1 = form.cleaned_data.get('billing_address')        
+    #                 billing_address2 = form.cleaned_data.get('billing_address2')        
+    #                 billing_country = form.cleaned_data.get('billing_country')        
+    #                 billing_zip = form.cleaned_data.get('billing_zip')
+
+    #                 if is_valid_form([billing_address1, billing_country, billing_zip]):        
+    #                     billing_address = Address(
+    #                         user=self.request.user,
+    #                         address=billing_address1,
+    #                         address_2=billing_address2,
+    #                         country=billing_country,
+    #                         zip=billing_zip,
+    #                         address_type = 'Billing'
+    #                     )
+    #                     billing_address.save()
+
+    #                     enroll.billing_address = billing_address
+    #                     enroll.save()
+
+    #                     set_default_billing = form.cleaned_data.get('set_default_billing')
+    #                     if set_default_billing:
+    #                         billing_address.default = True
+    #                         billing_address.save()
+
+    #                 else:
+    #                     messages.info(self.request, "Please filling in the required billing address fields!")        
+
+    #             payment = form.cleaned_data.get('payment')
+    #             if payment == 'Stripe':
+    #                 return redirect('core:payment', payment='Stripe')
+    #             elif payment == 'Paypal':
+    #                 return redirect('core:payment', payment='Paypal')
+    #             elif payment == 'MMG':
+    #                 return redirect('core:payment', payment='MMG')
+    #             else:
+    #                 messages.warning(
+    #                     self.request, "Invalid payment selection, please try again!")
+    #                 return redirect("core:checkout")
+    #     except ObjectDoesNotExist:
+    #         messages.warning(self.request, "You are not in any course!")
+    #         return redirect("core:enroll-summary")
+
+
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
@@ -95,6 +265,15 @@ class CheckoutView(View):
                 'DISPLAY_COUPON_FORM': True
             }
 
+            shipping_address_qs = Address.objects.filter(
+                user=self.request.user,
+                address_type='Shipping',
+                default=True
+            )
+            if shipping_address_qs.exists():
+                context.update(
+                    {'default_shipping_address': shipping_address_qs[0]})
+
             billing_address_qs = Address.objects.filter(
                 user=self.request.user,
                 address_type='Billing',
@@ -102,26 +281,76 @@ class CheckoutView(View):
             )
             if billing_address_qs.exists():
                 context.update(
-                    {'default_billing_address':
-                    billing_address_qs[0]})
-
+                    {'default_billing_address': billing_address_qs[0]})
             return render(self.request, "checkout.html", context)
         except ObjectDoesNotExist:
-            messages.info(
-                self.request, "You are currently not enrolled in a course!")
-            return redirect('core:checkout')
-    # Post Method
+            messages.info(self.request, "You are not enrolled in any course!")
+            return redirect("core:checkout")
+
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
             if form.is_valid():
+
+                use_default_shipping = form.cleaned_data.get(
+                    'use_default_shipping')
+                if use_default_shipping:
+                    print("Using the default shipping address")
+                    address_qs = Address.objects.filter(
+                        user=self.request.user,
+                        address_type='Shipping',
+                        default=True
+                    )
+                    if address_qs.exists():
+                        shipping_address = address_qs[0]
+                        enroll.shipping_address = shipping_address
+                        enroll.save()
+                    else:
+                        messages.info(
+                            self.request, "No default shipping address available")
+                        return redirect('core:checkout')
+                else:
+                    print("User is entering a new shipping address")
+                    shipping_address1 = form.cleaned_data.get(
+                        'shipping_address')
+                    shipping_address2 = form.cleaned_data.get(
+                        'shipping_address2')
+                    shipping_country = form.cleaned_data.get(
+                        'shipping_country')
+                    shipping_zip = form.cleaned_data.get('shipping_zip')
+
+                    if is_valid_form([shipping_address1, shipping_country, shipping_zip]):
+                        shipping_address = Address(
+                            user=self.request.user,
+                            address=shipping_address1,
+                            address_2=shipping_address2,
+                            country=shipping_country,
+                            zip=shipping_zip,
+                            address_type='Shipping'
+                        )
+                        shipping_address.save()
+
+                        enroll.shipping_address = shipping_address
+                        enroll.save()
+
+                        set_default_shipping = form.cleaned_data.get(
+                            'set_default_shipping')
+                        if set_default_shipping:
+                            shipping_address.default = True
+                            shipping_address.save()
+
+                    else:
+                        messages.info(
+                            self.request, "Please fill in the required shipping address fields")
+
                 use_default_billing = form.cleaned_data.get(
                     'use_default_billing')
-                same_billing_address = form.cleaned_data.get('same_billing_address')
+                same_billing_address = form.cleaned_data.get(
+                    'same_billing_address')
 
                 if same_billing_address:
-                    billing_address = billing_address
+                    billing_address = shipping_address
                     billing_address.pk = None
                     billing_address.save()
                     billing_address.address_type = 'Billing'
@@ -130,65 +359,71 @@ class CheckoutView(View):
                     enroll.save()
 
                 elif use_default_billing:
-                    print("Using default billing address")
+                    print("Using the default billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='Billing',
                         default=True
-
                     )
-                    # checks if user has a default billing address
                     if address_qs.exists():
                         billing_address = address_qs[0]
                         enroll.billing_address = billing_address
                         enroll.save()
                     else:
-                        messages.info(self.request, "No default billing address is available")
+                        messages.info(
+                            self.request, "No default billing address available")
                         return redirect('core:checkout')
                 else:
-                    print("Use is entering a new billing address"
-                    )
-                    billing_address1 = form.cleaned_data.get('billing_address')        
-                    billing_address2 = form.cleaned_data.get('billing_address2')        
-                    billing_country = form.cleaned_data.get('billing_country')        
+                    print("User is entering a new billing address")
+                    billing_address1 = form.cleaned_data.get(
+                        'billing_address')
+                    billing_address2 = form.cleaned_data.get(
+                        'billing_address2')
+                    billing_country = form.cleaned_data.get(
+                        'billing_country')
                     billing_zip = form.cleaned_data.get('billing_zip')
 
-                    if is_valid_form([billing_address1, billing_country, billing_zip]):        
+                    if is_valid_form([billing_address1, billing_country, billing_zip]):
                         billing_address = Address(
                             user=self.request.user,
                             address=billing_address1,
                             address_2=billing_address2,
                             country=billing_country,
                             zip=billing_zip,
-                            address_type = 'Billing'
+                            address_type='Billing'
                         )
                         billing_address.save()
 
                         enroll.billing_address = billing_address
                         enroll.save()
 
-                        set_default_billing = form.cleaned_data.get('set_default_billing')
+                        set_default_billing = form.cleaned_data.get(
+                            'set_default_billing')
                         if set_default_billing:
                             billing_address.default = True
                             billing_address.save()
 
                     else:
-                        messages.info(self.request, "Please filling in the required billing address fields!")        
+                        messages.info(
+                            self.request, "Please fill in the required billing address fields")
 
-                payment = form.cleaned_data.get('payment')
-                if payment == 'Stripe':
+                payment_option = form.cleaned_data.get('payment')
+
+                if payment_option == 'Stripe':
                     return redirect('core:payment', payment='Stripe')
-                elif payment == 'Paypal':
-                    return redirect('core:payment', payment='Paypal')
-                elif payment == 'MMG':
+                elif payment_option == 'Paypal':
+                    return redirect('core:paypal', payment='Paypal')
+
+                elif payment_option == 'MMG':
                     return redirect('core:payment', payment='MMG')
                 else:
                     messages.warning(
-                        self.request, "Invalid payment selection, please try again!")
-                    return redirect("core:checkout")
+                        self.request, "Invalid payment option selected")
+                    return redirect('core:checkout')
         except ObjectDoesNotExist:
-            messages.warning(self.request, "You are not in any course!")
-            return redirect("core:enroll-summary")
+            messages.warning(self.request, "You do not have an active order")
+            return redirect("core:order-summary")
+
 
 # Payment
 
