@@ -27,3 +27,5 @@ urlpatterns = [
     # path('remove-single-course/<slug>/',
     #      remove_single_course_item, name='remove-single-course'),
 ]
+
+
