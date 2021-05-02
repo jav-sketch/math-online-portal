@@ -4,6 +4,7 @@ from django.shortcuts import reverse
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -77,9 +78,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField()
+    image = models.ImageField(default='default.jpg', upload_to='profile_pic')
+
 
     def __str__(self):
-        return self.user.username
+        # return self.user.username
+        return f'{self.user.username} UserProfile'
 
 # CourseItem Model
 class CourseItem(models.Model):
