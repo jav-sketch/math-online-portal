@@ -43,11 +43,34 @@ class ProfileView(View):
         }
         return render(self.request, "account/profile.html", context)
 
-#TODO: About view 
+#About view
+class AboutView(ListView):
+    context_object_name = 'about'
+    template_name = "about.html"
+    queryset = About.objects.all()
 
+    def get_conext_data(self, **kwargs):
+        context = super(AboutView, self).get_context_data(**kwargs)
+        context['staff_list'] = StaffMember.objects.all()
+        return context
+
+
+
+# # Staff Member View
+# class StaffMemberView(ListView):
+#     model = StaffMember
+#     template_name = "about.html"
 
 
 #TODO: Contact View
+class ContactView(View):
+    def get(self, *args, **kwargs):
+        form = ContactForm()
+        context = {
+            'form': form
+        }
+        return render(self.request, "contact.html", context)
+    
 
 
 
@@ -258,7 +281,7 @@ class EnrollDetailView(DetailView):
     #         messages.warning(self.request, "You are not in any course!")
     #         return redirect("core:enroll-summary")
 
-
+# Checkout 
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
