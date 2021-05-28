@@ -136,8 +136,8 @@ class Enroll(models.Model):
     enrolled_date = models.DateTimeField()
     billing_address = models.ForeignKey(
         'Address', related_name='billing_address', on_delete=models.SET_NULL, blank=True, null=True)
-    # shipping_address = models.ForeignKey(
-    #     'Address', related_name='shipping_address', on_delete=models.SET_NULL, blank=True, null=True)
+    shipping_address = models.ForeignKey(
+        'Address', related_name='shipping_address', on_delete=models.SET_NULL, blank=True, null=True)
     payment = models.ForeignKey(
         'Payment', on_delete=models.SET_NULL, blank=True, null=True)
     coupon = models.ForeignKey(
@@ -184,6 +184,29 @@ class Section(models.Model):
     def __str__(self):
         return self.name
 
+#about model
+class About(models.Model):
+    title = models.CharField(max_length=50, null=True)
+    description= models.TextField()
+    owner = models.CharField(max_length=50, null=True)
+    owner_description = models.TextField()
+    owner_image = models.ImageField(default='default.jpg', upload_to='owner_img')
+
+    def __str__(self):
+        return self.title
+
+
+# Staff
+class StaffMember(models.Model):
+    title = models.CharField(max_length=50, null=True)
+    staff_member = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True)
+    staff_member_description = models.TextField()
+    staff_member_image = models.ImageField(default='default.jpg', upload_to='staff_member_img')
+
+    def __str__(self):
+        return self.title
+
+
 # Address
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -200,6 +223,17 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = 'Addresses'    
+
+# # Student Model
+# class Student(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     course_enrolled_in = models.ForeignKey(Enroll, on_delete=models.CASCADE)
+#     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+#     student_address = models.ForeignKey(Address, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#         return self.user.username
+
 
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=50)
@@ -231,6 +265,18 @@ class Refund(models.Model):
     def __str__(self):
         return f"{self.pk}"
 
+# Course Review Model
+# class Reviews(models.Model):
+#     pass 
+
+
+# # Top Featured Courses
+# class FeaturedCourses(models.Model):
+#     pass
+
+
+
+# Django Signals function
 def userprofile_receiver(sender, instance, created, *args, **kwargs):
     if created:
         userprofile = UserProfile.objects.create(user=instance)
