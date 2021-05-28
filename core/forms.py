@@ -59,5 +59,13 @@ class RefundForm(forms.Form):
 class PaymentForm(forms.Form):
     stripeToken = forms.CharField(required=False)    
     save = forms.BooleanField(required=False)    
-    use_default = forms.BooleanField(required=False)    
+    use_default = forms.BooleanField(required=False)
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='name', max_length=50)
+    email  = forms.EmailField()
+    # message = forms.CharField(widget=forms.Textarea(attrs={
+    #     'row': 5
+    # }))
 
