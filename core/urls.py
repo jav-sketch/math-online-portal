@@ -13,6 +13,8 @@ urlpatterns = [
 
     path('course/', CourseView.as_view(), name="course"),
     path('accounts/profile/', ProfileView.as_view(), name="profile"),
+    path('about/', AboutView.as_view(), name="about"),
+    path('contact/', ContactView.as_view(), name="contact"),
     path('course/<slug>/', CourseView.as_view(), name="course"),
     path('detail/<slug>/', CourseDetailView.as_view(), name="detail"),
     # path('enroll/<slug>/', EnrollDetailView.as_view(), name='enroll-summary'),
