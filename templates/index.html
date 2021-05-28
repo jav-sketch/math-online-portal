@@ -1,5 +1,4 @@
 {% extends 'base.html' %} {% block content %}
-{% load static %}
 {% block extra_head  %}
 <style>
   .jarallax {
@@ -36,12 +35,11 @@
   }
 </style>
 {% endblock  %}
-{% for heading in object_list %}
-<div id="home" class="view jarallax" data-jarallax="{&quot;speed&quot;: 0.2}"
-  style="background-image: none; background-repeat: no-repeat; background-size: cover; background-position: center center; z-index: 0;"
-  data-jarallax-original-styles="background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center center;">
-  <div class="mask rgba-grey-strong">
+
+<div id="home" class="view jarallax background-img" data-jarallax="{&quot;speed&quot;: 0.2}">
+  <div class="mask rgba-black-strong">
     <div class="container h-100 d-flex justify-content-center align-items-center">
+      {% for heading in object_list %}
       <div class="row smooth-scroll">
         <div class="col-md-12 white-text text-center">
           <div class="wow fadeInDown" data-wow-delay="0.2s"
@@ -49,7 +47,7 @@
             <h2 class="display-3 h1 font-weight-bold mb-2">{{ heading.title }}</h2>
             <hr class="hr-light">
             <h4 class="subtext-header mt-4 mb-5">{{ heading.description }}</h4>
-            <p class="text-bold">We offer CXC Subjects as well. Interested in knowing more? Please click the link
+            <p class="text-bold">We offer CXC Subjects at an affordable rate. Interested in knowing more? Please click the link
               below.</p>
           </div>
           <a href="#learnmore" data-offset="100"
@@ -57,10 +55,12 @@
             style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.2s;">Learn
             More</a>
           <a href="{% url 'core:course' %}" data-offset="100"
-            class="btn rounded-pill btn-orange text-white wow fadeInRight waves-effect waves-light" data-wow-delay="0.2s"
+            class="btn rounded-pill btn-orange text-white wow fadeInRight waves-effect waves-light"
+            data-wow-delay="0.2s"
             style="visibility: visible; animation-name: fadeInRight; animation-delay: 0.2s;">Courses</a>
         </div>
       </div>
+      {% endfor %}
     </div>
   </div>
   <div id="jarallax-container-0"
@@ -70,7 +70,7 @@
     </div>
   </div>
 </div>
-{% endfor %}
+
 
 
 
@@ -89,19 +89,19 @@
   <!--Top Courses Sections-->
   <div class="container-fluid background-r">
     <div class="container py-3">
-  
+
       <!--Section: Blog v.2-->
       <section class="extra-margins text-center">
-  
+
         <h2 class="text-center mb-5 my-5 pt-4 pb-4 font-weight-bold"> Top Courses</h2>
-        
+
         <!--Grid row-->
         <div class="row mb-5 pb-3">
-  
+
           <!--Grid column one-->
           <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
             style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
-  
+
             <!--Card Light-->
             <div class="card">
               <!--Card image-->
@@ -114,7 +114,7 @@
               <!--/.Card image-->
               <!--Card content-->
               <div class="card-body">
-  
+
                 <!--Title-->
                 <h4 class="card-title darkgrey-text">
                   <strong>Full-Time Package</strong>
@@ -135,14 +135,14 @@
               <!--/.Card content-->
             </div>
             <!--/.Card Light-->
-  
+
           </div>
           <!--Grid column one-->
-  
+
           <!--Grid column two-->
           <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
             style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
-  
+
             <!--Card Light-->
             <div class="card">
               <!--Card image-->
@@ -155,7 +155,7 @@
               <!--/.Card image-->
               <!--Card content-->
               <div class="card-body">
-  
+
                 <!--Title-->
                 <h4 class="card-title darkgrey-text">
                   <strong>Evening Package</strong>
@@ -176,14 +176,14 @@
               <!--/.Card content-->
             </div>
             <!--/.Card Light-->
-  
+
           </div>
           <!--Grid column  two-->
 
           <!--Grid column three-->
           <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
             style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
-  
+
             <!--Card Light-->
             <div class="card">
               <!--Card image-->
@@ -196,7 +196,7 @@
               <!--/.Card image-->
               <!--Card content-->
               <div class="card-body">
-  
+
                 <!--Title-->
                 <h4 class="card-title darkgrey-text">
                   <strong>After School</strong>
@@ -217,14 +217,14 @@
               <!--/.Card content-->
             </div>
             <!--/.Card Light-->
-  
+
           </div>
           <!--Grid column  three-->
 
           <!--Grid column four-->
           <div class="col-lg-3 col-md-6 mb-4 wow fadeIn" data-wow-delay="0.4s"
             style="visibility: visible; animation-name: fadeIn; animation-delay: 0.4s;">
-  
+
             <!--Card Light-->
             <div class="card">
               <!--Card image-->
@@ -237,7 +237,7 @@
               <!--/.Card image-->
               <!--Card content-->
               <div class="card-body">
-  
+
                 <!--Title-->
                 <h4 class="card-title darkgrey-text">
                   <strong>Private Tutoring</strong>
@@ -258,17 +258,17 @@
               <!--/.Card content-->
             </div>
             <!--/.Card Light-->
-  
+
           </div>
           <!--Grid column  four-->
-        
-  
+
+
         </div>
         <!--First row-->
-  
+
       </section>
       <!--Section: Blog v.2-->
-  
+
     </div>
   </div>
   <!--Top Courses Sections-->
