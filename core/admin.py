@@ -43,12 +43,13 @@ class AddressAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(UserProfile)
+admin.site.register(Subject)
 admin.site.register(Course)
 admin.site.register(CourseItem)
+admin.site.register(LearnMore)
 admin.site.register(Teacher)
 admin.site.register(Enroll, EnrollAdmin)
 admin.site.register(StaffMember)
-admin.site.register(About)
 admin.site.register(Heading)
 admin.site.register(Section)
 admin.site.register(Address, AddressAdmin)
