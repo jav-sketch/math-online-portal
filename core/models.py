@@ -73,11 +73,25 @@ class Course(models.Model):
             'slug': self.slug
         })
 
+ # CSEC Subjects
+class Subject(models.Model):
+    title = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField()
+    image = models.ImageField(default='subject.png',upload_to='subject_img')
+
+
+    def __str__(self):
+        return self.title
+
+
 #User Profile Model
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    email = models.CharField(max_length=50, null=True)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField()
+    is_staff = models.ForeignKey('StaffMember', on_delete=models.SET_NULL, null=True )
+    is_superuser = models.BooleanField(default=False)
     image = models.ImageField(default='default.jpg', upload_to='profile_pic')
 
 
@@ -190,21 +204,31 @@ class About(models.Model):
     description= models.TextField()
     owner = models.CharField(max_length=50, null=True)
     owner_description = models.TextField()
-    owner_image = models.ImageField(default='default.jpg', upload_to='owner_img')
+    owner_description_2 = models.TextField()
+    owner_image = models.ImageField(default='default.png', upload_to='owner_img')
 
     def __str__(self):
         return self.title
+
+
+# Learn more 
+class LearnMore(models.Model):
+    title = models.CharField(max_length=50, null=True, blank=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
 
 
 # Staff
 class StaffMember(models.Model):
-    title = models.CharField(max_length=50, null=True)
     staff_member = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True)
     staff_member_description = models.TextField()
-    staff_member_image = models.ImageField(default='default.jpg', upload_to='staff_member_img')
+    staff_member_image = models.ImageField(default='default.png', upload_to='staff_member_img')
 
     def __str__(self):
-        return self.title
+        return str(self.staff_member)
 
 
 # Address
@@ -224,15 +248,6 @@ class Address(models.Model):
     class Meta:
         verbose_name_plural = 'Addresses'    
 
-# # Student Model
-# class Student(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     course_enrolled_in = models.ForeignKey(Enroll, on_delete=models.CASCADE)
-#     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-#     student_address = models.ForeignKey(Address, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.user.username
 
 
 class Payment(models.Model):
