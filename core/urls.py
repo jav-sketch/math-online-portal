@@ -10,8 +10,9 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(
         url=staticfiles_storage.url('img/favicon.ico'))),
     path('', HomeView.as_view(), name='index'),
-
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('course/', CourseView.as_view(), name="course"),
+    path('learnmore/', LearnMoreView.as_view(), name="learn"),
     path('accounts/profile/', ProfileView.as_view(), name="profile"),
     path('about/', AboutView.as_view(), name="about"),
     path('contact/', ContactView.as_view(), name="contact"),
