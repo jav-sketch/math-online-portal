@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, DetailView, ListView, View
+from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.utils import timezone
+from django.core.mail import send_mail
 # Create your views here.
 from .models import *
 from .forms import *
@@ -21,12 +23,14 @@ def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
 # Custom billing address form validation
+
+
 def is_valid_form(values):
     valid = True
     for field in values:
         if field == '':
             valid = False
-    return valid        
+    return valid
 
 
 # Index Page
@@ -34,35 +38,49 @@ class HomeView(ListView):
     model = Heading
     template_name = "index.html"
 
+
 # User Profile
-class ProfileView(View):
+
+class ProfileView(UpdateView):
     def get(self, *args, **kwargs):
-        user = UserProfile.objects.all()
+        userprofile = UserProfile.objects.all()
+        form = EditUserProfileForm()
         context = {
-            'userprofile': UserProfile
+            'userprofile': userprofile,
+            'form': form
         }
         return render(self.request, "account/profile.html", context)
 
-#About view
+    def post(self, *args, **kwargs):
+        form = EditUserProfileForm(self.request.POST or None)
+        userprofile = UserProfile.objects.get_or_create(user=self.request.user)
+        if form.is_valid():
+            userprofile.username = form.cleaned_data.get('username')
+            userprofile.first_name = form.cleaned_data.get('first_name')
+            userprofile.last_name = form.cleaned_data.get('last_name')
+            userprofile.email = form.cleaned_data.get('email')
+            userprofile.save()
+            print('form is valid')
+            messages.info(self.request, "Profile was updated successfully")
+            return redirect("core:profile")
+        else:
+            messages.info(self.request, "Please try again")
+            return redirect("core:profile")
+
+
+# About view
 class AboutView(ListView):
     context_object_name = 'about'
     template_name = "about.html"
     queryset = About.objects.all()
 
-    def get_conext_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super(AboutView, self).get_context_data(**kwargs)
         context['staff_list'] = StaffMember.objects.all()
         return context
 
 
-
-# # Staff Member View
-# class StaffMemberView(ListView):
-#     model = StaffMember
-#     template_name = "about.html"
-
-
-#TODO: Contact View
+# Contact View
 class ContactView(View):
     def get(self, *args, **kwargs):
         form = ContactForm()
@@ -70,8 +88,34 @@ class ContactView(View):
             'form': form
         }
         return render(self.request, "contact.html", context)
-    
 
+    def post(self, *args, **kwargs):
+        form = ContactForm(self.request.POST)
+        if form.is_valid():
+            subject = 'Website Inquiry'
+            body = {
+                'name': form.cleaned_data['name'],
+                'email': form.cleaned_data['email'],
+                'subject': form.cleaned_data['subject'],
+                'message': form.cleaned_data['message'],
+            }
+            message = "\n".join(body.values())
+            print('Form is valid')
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    'javonbrowne@gmail.com',
+                    ['javonbrowne@gmail.com']
+                )
+                messages.info(
+                    self.request, "Thank You for contacting us. we will get back to you as soon as possible!")
+                return redirect("core:contact")
+            except ObjectDoesNotExist:
+                messages.info(
+                    self.request, "Please enter your contact details")
+                return redirect("core:contact")
 
 
 # Courses template
@@ -79,10 +123,27 @@ class CourseView(ListView):
     model = Course
     template_name = "course.html"
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['courses'] = Course.objects.all()[:]
-    #     return context
+# Dashboard
+# def dashboard(request):
+#     return render( request, 'dashboard.html')
+
+
+class DashboardView(ListView):
+    def get(self, *args, **kwargs):
+        context = {}
+        return render(self.request, 'dashboard.html', context)
+
+
+# Learn More View
+class LearnMoreView(ListView):
+    context_object_name = 'learnmore_list'
+    template_name = 'learn.html'
+    queryset = LearnMore.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(LearnMoreView, self).get_context_data(**kwargs)
+        context['subject_list'] = Subject.objects.all()
+        return context
 
 
 # Enroll Summary
@@ -111,177 +172,7 @@ class EnrollDetailView(DetailView):
     template_name = "enroll.html"
 
 
-# Checkout Method
-
-# class CheckoutView(View):
-#     def get(self, *args, **kwargs):
-#         try:
-#             enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
-#             form = CheckoutForm()
-#             context = {
-#                 'form': form,
-#                 'couponform': CouponForm(),
-#                 'enroll': enroll,
-#                 'DISPLAY_COUPON_FORM': True
-#             }
-#             shipping_address_qs = Address.objects.filter(
-#                 user=self.request.user,
-#                 address_type='Shipping',
-#                 default=True
-#             )
-#             if shipping_address_qs.exists():
-#                 context.update(
-#                     {'default_shipping_address': shipping_address_qs[0]}
-#                 )
-
-#             billing_address_qs = Address.objects.filter(
-#                 user=self.request.user,
-#                 address_type='Billing',
-#                 default=True
-#             )
-
-#             if billing_address_qs.exists():
-#                 context.update(
-#                     {'default_billing_address':
-#                     billing_address_qs[0]}
-#                 )
-#             return render(self.request, "checkout.html", context)            
-#         except ObjectDoesNotExist:
-#             messages.info(
-#                 self.request, "You are currently not enrolled in a course!")
-#             return redirect('core:checkout')
-    # Post Method
-    # def post(self, *args, **kwargs):
-    #     form = CheckoutForm(self.request.POST or None)
-    #     try:
-    #         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
-    #         if form.is_valid():
-
-    #             use_default_shipping = form.cleaned_data.get('use_default_shipping')
-
-    #             if use_default_shipping:
-    #                 print("Using deault shipping address")
-    #                 address_qs = Address.objects.filter(
-    #                     user=self.request.user,
-    #                     address_type='Shipping',
-    #                     default=True
-    #                 )
-    #                 if address_qs.exists():
-    #                     shipping_address = address_qs[0] 
-    #                     enroll.shipping_address = shipping_address
-    #                     enroll.save()
-    #                 else:
-    #                     messages.info(self.request, "No Default shipping address is available!")
-    #                     return redirect('core:checkout')
-    #             else:
-    #                 print("User is entering new shipping address.")
-    #                 shipping_address1 = form.cleaned_data.get('shipping_address')
-    #                 shipping_address2 = form.cleaned_data.get('shipping_address2')
-    #                 shipping_country = form.cleaned_data.get('shipping_country')
-    #                 shipping_zip = form.cleaned_data.get('shipping_zip')
-
-    #                 if is_valid_form([shipping_address1, shipping_country, shipping_zip]):
-    #                     shipping_address = Address(
-    #                         user=self.request.user,
-    #                         address=shipping_address1,
-    #                         address_2=shipping_address2,
-    #                         country=shipping_country,
-    #                         zip=shipping_zip,
-    #                         address_type='Shipping'
-    #                     )
-    #                     shipping_address.save()
-
-    #                     enroll.shipping_address = shipping_address
-    #                     enroll.save()
-
-    #                     set_default_shipping = form.cleaned_data.get('set_default_shipping')
-
-    #                     if set_default_shipping:
-    #                         shipping_address.default = True
-    #                         shipping_address.save()
-
-    #                 else:
-    #                     messages.info(
-    #                         self.request, "Please fill in the required shipping address fields."
-    #                     )        
-
-
-    #             use_default_billing = form.cleaned_data.get(
-    #                 'use_default_billing')
-    #             same_billing_address = form.cleaned_data.get('same_billing_address')
-
-
-    #             if same_billing_address:
-    #                 billing_address = shipping_address
-    #                 billing_address.pk = None
-    #                 billing_address.save()
-    #                 billing_address.address_type = 'Billing'
-    #                 billing_address.save()
-    #                 enroll.billing_address = billing_address
-    #                 enroll.save()
-
-    #             elif use_default_billing:
-    #                 print("Using default billing address")
-    #                 address_qs = Address.objects.filter(
-    #                     user=self.request.user,
-    #                     address_type='Billing',
-    #                     default=True
-
-    #                 )
-    #                 # checks if user has a default billing address
-    #                 if address_qs.exists():
-    #                     billing_address = address_qs[0]
-    #                     enroll.billing_address = billing_address
-    #                     enroll.save()
-    #                 else:
-    #                     messages.info(self.request, "No default billing address is available")
-    #                     return redirect('core:checkout')
-    #             else:
-    #                 print("Use is entering a new billing address"
-    #                 )
-    #                 billing_address1 = form.cleaned_data.get('billing_address')        
-    #                 billing_address2 = form.cleaned_data.get('billing_address2')        
-    #                 billing_country = form.cleaned_data.get('billing_country')        
-    #                 billing_zip = form.cleaned_data.get('billing_zip')
-
-    #                 if is_valid_form([billing_address1, billing_country, billing_zip]):        
-    #                     billing_address = Address(
-    #                         user=self.request.user,
-    #                         address=billing_address1,
-    #                         address_2=billing_address2,
-    #                         country=billing_country,
-    #                         zip=billing_zip,
-    #                         address_type = 'Billing'
-    #                     )
-    #                     billing_address.save()
-
-    #                     enroll.billing_address = billing_address
-    #                     enroll.save()
-
-    #                     set_default_billing = form.cleaned_data.get('set_default_billing')
-    #                     if set_default_billing:
-    #                         billing_address.default = True
-    #                         billing_address.save()
-
-    #                 else:
-    #                     messages.info(self.request, "Please filling in the required billing address fields!")        
-
-    #             payment = form.cleaned_data.get('payment')
-    #             if payment == 'Stripe':
-    #                 return redirect('core:payment', payment='Stripe')
-    #             elif payment == 'Paypal':
-    #                 return redirect('core:payment', payment='Paypal')
-    #             elif payment == 'MMG':
-    #                 return redirect('core:payment', payment='MMG')
-    #             else:
-    #                 messages.warning(
-    #                     self.request, "Invalid payment selection, please try again!")
-    #                 return redirect("core:checkout")
-    #     except ObjectDoesNotExist:
-    #         messages.warning(self.request, "You are not in any course!")
-    #         return redirect("core:enroll-summary")
-
-# Checkout 
+# Checkout
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
@@ -455,7 +346,6 @@ class CheckoutView(LoginRequiredMixin, View):
 
 
 # Payment
-
 class PaymentView(View):
     def get(self, *args, **kwargs):
         enroll = Enroll.objects.get(user=self.request.user, enrolled=False)
@@ -689,7 +579,7 @@ class RefundRequestView(View):
             'form': form
         }
         return render(self.request, "refund_request.html", context)
-        
+
     def post(self, *args, **kwargs):
         form = RefundForm(self.request.POST)
         if form.is_valid():
@@ -709,7 +599,8 @@ class RefundRequestView(View):
                 refund.email = email
                 refund.save()
 
-                messages.info(self.request, "Your request was received and is being processed. We will contact you as soon as possible.")
+                messages.info(
+                    self.request, "Your request was received and is being processed. We will contact you as soon as possible.")
                 return redirect("core:refund-request")
             except ObjectDoesNotExist:
                 messages.info(self.request, "This course does not exist")
