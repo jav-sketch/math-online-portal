@@ -50,7 +50,7 @@
             <p class="text-bold">We offer CXC Subjects at an affordable rate. Interested in knowing more? Please click the link
               below.</p>
           </div>
-          <a href="#learnmore" data-offset="100"
+          <a href="{% url 'core:learn' %}" data-offset="100"
             class="btn rounded-pill btn-info wow fadeInLeft waves-effect waves-light" data-wow-delay="0.2s"
             style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.2s;">Learn
             More</a>
@@ -59,6 +59,7 @@
             data-wow-delay="0.2s"
             style="visibility: visible; animation-name: fadeInRight; animation-delay: 0.2s;">Courses</a>
         </div>
+        
       </div>
       {% endfor %}
     </div>
@@ -75,6 +76,7 @@
 
 
 <main>
+
   <!--Aim Section-->
   {% include 'section.html' %}
   <!--Aim Section-->
