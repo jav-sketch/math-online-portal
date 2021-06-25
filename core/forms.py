@@ -1,6 +1,12 @@
+from django.db.models import fields
+from .models import UserProfile
 from django import forms
+from django.contrib import messages
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.models import User
+
 
 PAYMENT_CHOICES = (
     ('Stripe', 'Stripe'),
@@ -61,11 +67,33 @@ class PaymentForm(forms.Form):
     save = forms.BooleanField(required=False)    
     use_default = forms.BooleanField(required=False)
 
-
+# Contact Form 
 class ContactForm(forms.Form):
     name = forms.CharField(label='name', max_length=50)
     email  = forms.EmailField()
-    # message = forms.CharField(widget=forms.Textarea(attrs={
-    #     'row': 5
-    # }))
+    subject = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea(attrs={
+        'row': 5
+    }))
+
+# creates user form
+class UserProfileCreationform(UserCreationForm):
+    unsername = forms.EmailField(required=True, label="Email")
+    first_name = forms.CharField(required=True, label="First Name")
+    last_name =forms.CharField(required=True, label="Last Name")
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name']
+
+
+class EditUserProfileForm(UserChangeForm): 
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        # fields = '__all__'
+
+
+
+
 
