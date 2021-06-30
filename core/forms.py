@@ -87,13 +87,16 @@ class UserProfileCreationform(UserCreationForm):
         fields = ['username', 'first_name', 'last_name']
 
 
-class EditUserProfileForm(UserChangeForm): 
+# class UserUpdateForm(forms.ModelForm): 
+#     class Meta:
+#         model = User
+#         fields = ['username', 'first_name', 'last_name', 'email']
+       
+
+
+class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-        # fields = '__all__'
-
-
-
-
-
+        model = UserProfile
+        fields = ['user','username', 'first_name', 'last_name', 'email', 'image']
+        exclude = ('stripe_customer_id', 'is_staff', 'is_superuser')
+        
