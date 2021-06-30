@@ -87,6 +87,9 @@ class Subject(models.Model):
 #User Profile Model
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    username = models.CharField(max_length=50, null=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField()
@@ -96,7 +99,6 @@ class UserProfile(models.Model):
 
 
     def __str__(self):
-        # return self.user.username
         return f'{self.user.username} UserProfile'
 
 # CourseItem Model
