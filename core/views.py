@@ -44,16 +44,19 @@ class HomeView(ListView):
 class ProfileView(UpdateView):
     def get(self, *args, **kwargs):
         userprofile = UserProfile.objects.all()
-        form = EditUserProfileForm()
+        form = UserProfileUpdateForm()
         context = {
             'userprofile': userprofile,
+            # 'userupdate_form': userupdate_form,
             'form': form
         }
         return render(self.request, "account/profile.html", context)
 
     def post(self, *args, **kwargs):
-        form = EditUserProfileForm(self.request.POST or None)
+        form =  UserProfileUpdateForm(self.request.POST)
+        print('data for profileupdate form', form)
         userprofile = UserProfile.objects.get_or_create(user=self.request.user)
+        print('this is the userprofile', userprofile)
         if form.is_valid():
             userprofile.username = form.cleaned_data.get('username')
             userprofile.first_name = form.cleaned_data.get('first_name')
@@ -61,7 +64,7 @@ class ProfileView(UpdateView):
             userprofile.email = form.cleaned_data.get('email')
             userprofile.save()
             print('form is valid')
-            messages.info(self.request, "Profile was updated successfully")
+            messages.success(self.request, "Profile was updated successfully")
             return redirect("core:profile")
         else:
             messages.info(self.request, "Please try again")
