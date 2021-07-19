@@ -35,8 +35,14 @@ def is_valid_form(values):
 
 # Index Page
 class HomeView(ListView):
-    model = Heading
+    context_object_name = 'heading'
     template_name = "index.html"
+    queryset = Heading.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['reviews'] = Review.objects.all()
+        return context
 
 
 # User Profile
@@ -134,7 +140,7 @@ class CourseView(ListView):
 class DashboardView(ListView):
     def get(self, *args, **kwargs):
         context = {}
-        return render(self.request, 'dashboard.html', context)
+        return render(self.request, 'dashboard_2.html', context)
 
 
 # Learn More View
