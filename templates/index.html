@@ -1,4 +1,6 @@
 {% extends 'base.html' %} {% block content %}
+<title>{% block title %} {{ site_title|default:_('Smart Choice Math Academy')}} | Index {% endblock %}
+</title>
 {% block extra_head  %}
 <style>
   .jarallax {

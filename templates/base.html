@@ -1,24 +1,24 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="Smart Choice Math Academy">
-    <meta description="SCMA is an online education platform tailored to meet the needs of a growing audience.The platform was developed by and for Guyanese.">
+    <meta
+        description="SCMA is an online education platform tailored to meet the needs of a growing audience.The platform was developed by and for Guyanese.">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-    <title>{% block head_title %}Smart Choice Math Academy{% endblock %}</title>
+    <title>{% block title %} {{ site_title|default:_('Smart Choice Math Academy')}} | {{ title}} {% endblock %}
+    </title>
     {% block extra_head %}
     <!-- <link rel="stylesheet" href="{% static 'css/payment.css' %}"> -->
     {% endblock %}
     <!--Material Icons-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
-    />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <!-- Bootstrap core CSS -->
@@ -35,9 +35,9 @@
 {% include 'navbar.html' %}
 
 <body style="height: 100vh;">
-    
 
-   
+
+
     {% block content %}
     {% endblock %}
 
@@ -46,7 +46,7 @@
     {% endblock %}
 
 
-    
+
 
     {% if messages %}
     {% for message in messages %}
@@ -64,8 +64,9 @@
     {% include 'footer.html' %}
     <!-- Javascript -->
     {% include 'scripts.html' %}
-    
+
     {% block extra_scripts %}
     {% endblock %}
 </body>
+
 </html>
