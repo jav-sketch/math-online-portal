@@ -5,6 +5,7 @@ from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 # Create your models here.
 
@@ -35,10 +36,12 @@ class Course(models.Model):
     discount_price = models.FloatField(blank=True, null=True)
     category = models.CharField(choices=CATEGORY, max_length=20)
     evening = models.CharField(choices=CATEGORY_CHOICES, max_length=20)
+    duration = models.DurationField(default=timedelta)
+    subject = models.ForeignKey("Subject", on_delete=models.SET_NULL, null=True )
     schedule = models.TextField(max_length=200)
     description = models.TextField()
     slug = models.SlugField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to='course_pic')
 
     def __str__(self):
         return self.title
@@ -140,6 +143,30 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Assignment Model
+class Assignment(models.Model):
+    ASSIGNMENT_TYPE = (
+        ('essay', "Essay"),
+
+    )
+
+    ASSIGNMENT_GRADE = (
+        ('a+', 'A+'),
+    )
+    course = models.ForeignKey("Course", on_delete=models.SET_NULL, null=True)
+    date_created = models.DateTimeField(auto_now=True)
+    assignment_type = models.CharField(choices=ASSIGNMENT_TYPE, max_length=15, default='essay')
+    due_date = models.DateTimeField()
+    grade = models.CharField(choices=ASSIGNMENT_GRADE, max_length=3, default='a+')
+    file = models.FileField(upload_to='assignment_files')
+    progress = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.pk}"
+    
+
 
 # Enroll Model
 class Enroll(models.Model):
@@ -282,12 +309,18 @@ class Refund(models.Model):
     def __str__(self):
         return f"{self.pk}"
 
-# Course Review Model
-# class Reviews(models.Model):
-#     pass 
+#Course Review Model
+class Review(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
+    comment = models.TextField(max_length=500)
+    rating = models.FloatField(default=0)
+    date_created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.user.username
 
-# # Top Featured Courses
+# Top Featured Courses
 # class FeaturedCourses(models.Model):
 #     pass
 
