@@ -1,5 +1,5 @@
 from django.db.models import fields
-from .models import UserProfile
+from .models import Review, UserProfile
 from django import forms
 from django.contrib import messages
 from django_countries.fields import CountryField
@@ -99,4 +99,12 @@ class UserProfileUpdateForm(forms.ModelForm):
         model = UserProfile
         fields = ['user','username', 'first_name', 'last_name', 'email', 'image']
         exclude = ('stripe_customer_id', 'is_staff', 'is_superuser')
+
+
+# Review Form
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = '__all__'
         
