@@ -6,7 +6,7 @@ from django_countries.widgets import CountrySelectWidget
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 # Course Model
@@ -314,7 +314,7 @@ class Review(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField(max_length=500)
-    rating = models.FloatField(default=0)
+    rating = models.FloatField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)])
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
