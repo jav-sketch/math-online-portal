@@ -139,7 +139,10 @@ class CourseView(ListView):
 
 class DashboardView(ListView):
     def get(self, *args, **kwargs):
-        context = {}
+        form = ReviewForm()
+        context = {
+            'form': form
+        }
         return render(self.request, 'dashboard_2.html', context)
 
 
